@@ -1,0 +1,142 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+   <caption>分公司管理</caption>
+   <caption>
+   <input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="分公司名称">
+   
+   <input type="button" name="serach" id="search" value="搜索">
+   </caption>
+   <thead>
+      <tr>
+         <th>编号</th>
+         <th>用户名</th>
+         <th>手机</th>
+         <th>分公司名称</th>
+         <th>地址</th>
+         <th>分公司类型</th>		 
+         <th>添加时间</th>
+         <th>到期时间</th>
+         <th>状态</th>
+         <th>上次登录时间</th>
+         <th>登录IP</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="fgs_data" item="v">
+      <tr>
+         <td>{$v.id}</td>
+         <td>{$v.username}</td>
+         <td>{$v.phone}</td>
+         <td>{$v.fgsname}</td>
+         <td>{$v.province_id|getprovincename=###}{$v.city_id|getcityname=###}{$v.area_id|getareaname=###}{$v.address}</td>
+         <td>
+			<if condition="$v[type] eq 1">区县分公司</if>
+			<if condition="$v[type] eq 2">市分公司</if>
+			<if condition="$v[type] eq 3">省分公司</if>
+		 </td>
+         <td>{$v.create_time|date="Y-m-d H:i",###}</td>
+         <td>{$v.ok_time|date="Y-m-d H:i",###}</td>
+         <td><if condition="$v[is_active] eq 1"><span style="color:green">已激活</span></if><if condition="$v[is_active] eq 0"><span style="color:red">已禁用</span></if></td>
+         <td><if condition="$v[last_login_time] gt 0">{$v.last_login_time|date="Y-m-d H:i",###}<else/>未登录过</if></td>
+         <td>{$v.last_login_ip}</td>
+         <td><a href="{:U('update',array('fgs_id'=>$v['id']))}"> 编辑 </a> | <if condition="$v[is_active] eq 1"><a href="#" data-id="{$v.id}" class="fgs-stop"> 禁用</a></if><if condition="$v[is_active] eq 0"><a href="#" data-id="{$v.id}" class="fgs-start"> 激活</a></if>
+		 |<a href="#" data-id="{$v.id}" data-password="{$v.password}" class="fgs-login"> 登录</a>
+		 </td>
+      </tr>
+	  </foreach>
+	  <tr>
+	    <td colspan="5" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('.fgs-stop').click(function(){
+	console.log($(this).attr('data-id'));
+	var url = "{:U('stopfgs')}?fgs_id="+$(this).attr('data-id');
+	
+	var r=confirm('你确定要禁用这个用户吗？')
+	if (r==true){
+		$.get(url, function(data,status){
+		if(data>=0){
+			alert('禁用成功');
+			location.reload();
+		}
+		else{
+			alert('禁用失败');
+		}
+		});
+		}
+	});
+	
+	$('.fgs-start').click(function(){
+	console.log($(this).attr('data-id'));
+	var url = "{:U('startfgs')}?fgs_id="+$(this).attr('data-id');
+	
+	var r=confirm('你确定要激活这个用户吗？')
+	if (r==true){
+		$.get(url, function(data,status){
+		if(data>=0){
+			alert('激活成功');
+			location.reload();
+		}
+		else{
+			alert('激活失败');
+		}
+		});
+		}
+	});
+	
+	$('.fgs-login').click(function(){
+		var id=$(this).attr('data-id');
+		var password=$(this).attr('data-password');
+		var url = "{:U('fgslogin')}?fgs_id="+id+"&password="+password;
+	
+		var r=confirm('你确定要登录这个分公司后台吗？')
+		if (r==true){
+			$.get(url, function(data,status){
+				if(data>=0){
+					window.open ("{:C('siteurl')}/bzbfgs.php/index");
+				}
+				else{
+					alert('登录失败');
+				}
+			});
+		}
+	});
+	
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('fgslist')}?keyword="+keyword;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

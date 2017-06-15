@@ -1,0 +1,222 @@
+<include file="Public/header" title="后台主页" />
+    
+
+<script>
+
+function loadRegion(sel,type_id,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val(),type:type_id},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+
+window.onload = function(){
+
+    
+
+  }
+</script>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<caption>队列调整</caption><br><br>
+	<div id="page-wrapper">
+	<form id="addrz-form" class="form-horizontal" role="form">
+		
+		<div class="form-group field-user-realname has-success">
+			<label class="control-label col-sm-3" for="user-realname">调整的队列区间 </label>
+			<div class="col-sm-5">
+								
+				<span style="float:left;padding:5px;">从</span>
+				<input type="text" id="fromqueue" class="form-control" name="fromqueue" value="" style="float:left;width:150px;">
+				<span style="float:left;padding:5px;">到</span>
+				<input type="text" id="toqueue" class="form-control" name="toqueue" value="" style="float:left;width:150px;"><span style="float:left;padding:5px;">(队列位置范围，不填为从最先一个未排出成员开始)</span>
+			</div>
+		</div>
+		
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">同一用户允许张数 </label>
+			<div class="col-sm-5">
+			<input type="text" id="canin" class="form-control" name="canin" value="" style="float:left;width:150px;">
+			<span style="float:left;padding:5px;">(留空默认为一张)</span>
+			</div>
+		</div> 
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">占报账券数的百分比 </label>
+			<div class="col-sm-5">
+			<input type="text" id="caninpercent" class="form-control" name="caninpercent" value="" style="float:left;width:150px;">
+			<span style="float:left;padding:5px;">(留空为忽略，填写则上一项无效)</span>
+			</div>
+		</div>
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">多少天没有排出券 </label>
+			<div class="col-sm-5">
+			<input type="text" id="caninday" class="form-control" name="caninday" value="" style="float:left;width:150px;">
+			<span style="float:left;padding:5px;">(留空为忽略，单位为天)</span>
+			</div>
+		</div>
+		<div class="form-group field-user-idcard_id has-success">
+            <label class="control-label col-sm-3">选择区域</label>
+			<div class="col-sm-9">
+            <select name="province_id" id="province_id" onchange="loadRegion('province_id',2,'city_id','{:U('Admin/Ajax/getRegion')}');" class="form-control col-sm-3" style="width:150px;float:left;margin-right:15px;">
+				<option value="0">选择省份</option>
+                <volist name="province" id="v">
+                    <option value="{$v.provinceid}">{$v.province}</option>
+                </volist>
+            </select>
+			<select name="city_id" id="city_id" onchange="loadRegion('city_id',3,'area_id','{:U('Admin/Ajax/getRegion')}');" class="form-control col-sm-3" style="width:150px;float:left;margin-right:15px;">
+				<option value="0">选择城市</option>
+               
+            </select>
+			<select name="area_id" id="area_id" class="form-control col-sm-3" style="width:150px;float:left;">
+				<option value="0">选择区/县</option>
+                
+            </select>
+			<span style="float:left;padding:5px;">(留空为全部)</span>
+			</div>
+        </div>
+		
+		<div class="form-group field-user-realname has-success">
+			<label class="control-label col-sm-3" for="user-realname">指定生成时间区间 </label>
+			<div class="col-sm-9">
+								
+				<span style="float:left;padding:5px;">从</span>
+				<input type="date" id="fromdate" class="form-control" name="fromdate" value="" style="float:left;width:150px;">
+				<span style="float:left;padding:5px;">到</span>
+				<input type="date" id="todate" class="form-control" name="todate" value="" style="float:left;width:150px;"><span style="float:left;padding:5px;">格式:2016-11-12 (留空为不限)</span>
+			</div>
+		</div>
+		
+		<input style="display:none" type="text" name="fakeusernameremembered"/>
+		<input style="display:none" type="password" name="fakepasswordremembered"/>
+		
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">调整总数 <span class="requery">*</span></label>
+			<div class="col-sm-5">
+			<input type="text" id="allnum" class="form-control" name="allnum" value="">
+			</div>
+		</div>
+		
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">调整密码 <span class="requery">*</span></label>
+			<div class="col-sm-5">
+			<input type="password" id="password" class="form-control" name="password" value="">
+			</div>
+		</div>
+		
+
+			 
+	  <div class="form-group" align="center">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<button type="button" id="addrz2" class="btn btn-primary">调整预览</button>                        
+				<button type="button" id="addrz1" class="btn btn-primary">确定提交</button>                        
+			</div>
+	  </div>
+	</form> 
+	</div>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+
+	//查看预览
+	$('#addrz2').click(function(){
+		var r=confirm('你确定要提交调整预览吗？');
+		if (r==true){
+			if($('#allnum').val()==''){
+				alert("数量不能为空");return false;
+			}
+			if($('#password').val()==''){
+				alert("密码不能为空");return false;
+			}
+			$.get("{:U('Admin/Sys/doquickqueue')}?dotype=2&"+$('form').serialize(), function(data,status){
+				console.log(data);
+				
+				if(data==-1){
+					alert("密码错误");
+					//location.href ="{:U('Home/User/info')}";
+				}
+				else if(data==-2){
+					alert("指定条件没有对应的报账券");
+					//location.href ="{:U('Home/User/info')}";
+				}
+
+				else{
+					alert(data);;
+				}
+				
+			});
+		}
+	});
+	
+	//进行提交
+	$('#addrz1').click(function(){
+		var r=confirm('你确定要提交调整吗？');
+		if (r==true){
+			if($('#allnum').val()==''){
+				alert("数量不能为空");return false;
+			}
+			if($('#password').val()==''){
+				alert("密码不能为空");return false;
+			}
+			$.get("{:U('Admin/Sys/doquickqueue')}?dotype=1&"+$('form').serialize(), function(data,status){
+				console.log(data);
+				if(data>=0){
+				alert('提交调整成功,调整数量为'+data);
+				//location.href ="{:U('Home/User/info')}";
+				}
+				else if(data==-1){
+					alert("密码错误");
+					//location.href ="{:U('Home/User/info')}";
+				}
+				else if(data==-2){
+					alert("指定条件没有对应的报账券");
+					//location.href ="{:U('Home/User/info')}";
+				}
+
+				else{
+					alert('提交修改失败');
+				}
+				
+			});
+		}
+	});
+		
+	
+</script>
+<include file="Public/footer" />

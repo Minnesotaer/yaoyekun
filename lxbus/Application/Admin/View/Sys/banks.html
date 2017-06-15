@@ -1,0 +1,190 @@
+<include file="Public/header" title="后台主页" />
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+   <caption>银行列表</caption>
+	<caption><a href="#" id="c-add" data-id="{$v.id}">添加银行</a></caption>
+   <thead>
+      <tr>
+         <th>银行名称</th>
+         <th>排序</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="bankname" item="v">
+      <tr>
+         <td>{$v.bankname}</td>
+         <td>{$v.sortid}</td>
+         <td><a href="#" class="c-edit" data-id="{$v.id}">修改</a></td>
+      </tr>
+	  </foreach>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               编辑
+            </h4>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+			<div class="form-group">
+			<label class="col-sm-2 control-label">银行名称</label>
+			<div class="col-sm-10">
+			<input type="text" name="bankname" id="bankname"  class="form-control">
+			<input type="hidden"  name="c-id">
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">排序</label>
+			<div class="col-sm-10">
+			<input type="text" name="sortid" id="sortid" class="form-control"></div>
+			</div>
+
+			
+			</form>
+			
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" 
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary" id="user-submit">
+               提交更改
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+
+  <!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               添加
+            </h4>
+         </div>
+         <div class="modal-body">
+			<div class="form-group">
+			<label class="col-sm-2 control-label">银行名称</label>
+			<div class="col-sm-10">
+			<input type="text" name="addbankname" id="addbankname"  class="form-control">
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">排序</label>
+			<div class="col-sm-10">
+			<input type="text" name="addsortid" id="addsortid" class="form-control"></div>
+			</div>
+
+			
+			
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" 
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary" id="add-submit">
+               提交添加
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+<script>
+$(document).ready(function(e) {
+	$('.c-edit').click(function(){
+		$('#myAlert').remove();
+		console.log($(this).parent().siblings().eq(1).text());
+		
+		$(':input[name="bankname"]').val($(this).parent().siblings().eq(0).text());
+		$(':input[name="sortid"]').val($(this).parent().siblings().eq(1).text());
+		$(':input[name="c-id"]').val($(this).attr('data-id'));
+		console.log($(this).attr('data-id'));
+		$('#myModal').modal('show');
+	});
+		
+	$('#c-add').click(function(){
+		$('#myAlert').remove();
+		
+		$('#myModal2').modal('show');
+	});
+
+	$('#user-submit').click(function(){
+		var url="{:U('savebanks')}?"+$('form').serialize();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data=='success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>修改成功！</strong></div>';
+			$('.modal-header').append(html);
+			location.reload();
+		}
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+
+	$('#add-submit').click(function(){
+		var url="{:U('addbanks')}?bankname="+$('#addbankname').val()+"&sortid="+$('#addsortid').val();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data=='success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>添加成功！</strong></div>';
+			$('.modal-header').append(html);
+			location.reload();
+		}
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+
+
+});
+</script>
+<include file="Public/footer" />

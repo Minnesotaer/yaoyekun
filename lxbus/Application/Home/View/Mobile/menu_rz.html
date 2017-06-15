@@ -1,0 +1,436 @@
+<html>
+<include file="Public/mobile_head" />
+<style type="text/css">
+body{margin: 0px; background:#f2f2f0;}
+p{margin:0px;}
+.title{color:#FFFF00; background:#000000; text-align:center; font-size:24px; line-height:50px; font-weight:bold;}
+.file{width:10%;left:30%; margin-top:6px;border:0px; height:10px; position:absolute;font-size:14px;}
+.filebtn{width:55%;margin:auto auto;margin-top:12px;display:block; position:relative; color:#f16265;font-family:"microsoft yahei"; background:rgb(255,210,0); font-size:1.06em;text-align:center; cursor:pointer; border:0px; border-radius:5px;padding:8px 0;}
+.showimg{margin:10px auto 10px auto; text-align:center;width:90%;}
+#address_select select{
+	margin-bottom: 5px;
+}
+</style>
+
+<script type="text/javascript">
+  window.onload = function(){
+
+    // 选择正面图片
+    document.getElementById('img').onchange = function(event){
+		
+        var img = event.target.files[0];
+
+        // 判断是否图片
+        if(!img){
+            return ;
+        }
+
+        // 判断图片格式
+        if(!(img.type.indexOf('image')==0 && img.type && /\.(?:jpg|png|gif)$/.test(img.name)) ){
+            alert('图片只能是jpg,gif,png');
+            return ;
+        }
+
+        var reader = new FileReader();
+        reader.readAsDataURL(img);
+		
+        reader.onload = function(e){ // reader onload start
+			$('#showimg').html('<span style="color:red;">正在上传...</span>');
+            // ajax 上传图片
+			var get_url = "{:U('Home/Mobile/picAdd')}";
+			var user_id=$('#user_id').val();
+			var token=$('#token').val();
+
+            $.post(get_url, { img: e.target.result,user_id:user_id,token:token,type:1},function(ret){	
+               if(ret.img!=''){
+                  alert(ret.msg);
+                    $('#showimg').html('<img src="/' + ret.img + '" width="200">');
+					$("input[name='idcard_face']").val(ret.img);
+					$('#showimg_1').html('');
+                }else if(ret.msg!=""){
+					$('#showimg').html('');
+					alert(ret.msg);
+				}else{
+					$('#showimg').html('');
+                    alert('图片上传失败！');
+                }
+            },'json');
+        } // reader onload end
+    }
+	
+	// 选择反面图片
+    document.getElementById('img2').onchange = function(event){
+		
+        var img = event.target.files[0];
+
+        // 判断是否图片
+        if(!img){
+            return ;
+        }
+
+        // 判断图片格式
+        if(!(img.type.indexOf('image')==0 && img.type && /\.(?:jpg|png|gif)$/.test(img.name)) ){
+            alert('图片只能是jpg,gif,png');
+            return ;
+        }
+
+        var reader = new FileReader();
+        reader.readAsDataURL(img);
+		
+        reader.onload = function(e){ // reader onload start
+			$('#showimg2').html('<span style="color:red;">正在上传...</span>');
+            // ajax 上传图片
+			var get_url = "{:U('Home/Mobile/picAdd')}";
+
+			var user_id=$('#user_id').val();
+			var token=$('#token').val();
+
+            $.post(get_url, { img: e.target.result,user_id:user_id,token:token,type:2},function(ret){	
+               if(ret.img!=''){
+                  alert(ret.msg);
+                    $('#showimg2').html('<img src="/' + ret.img + '" width="200">');
+					$("input[name='idcard_back']").val(ret.img);
+					$('#showimg_2').html('');
+                }else if(ret.msg!=""){
+					$('#showimg2').html('');
+					alert(ret.msg);
+				}else{
+					$('#showimg2').html('');
+                    alert('图片上传失败！');
+                }
+            },'json');
+        } // reader onload end
+    }
+	
+	
+
+  }
+  
+  </script>
+<body style="margin:0;padding:0;">
+  <style>
+	.head_back{
+		background-color:#0c60ee;
+		font-size:18px;
+		color:#fff;
+		line-height:45px;
+	}
+	.head_back img{
+		width:23px;
+		height:30px;
+		margin-top:-5px;
+		margin-right:-5px;		
+	}
+	.head_back a{
+		float:left;
+		font-size:16px;
+		width:18%;
+		text-decoration:none;
+	}
+	.head_back .myspan{
+		float:left;
+		width:70%;
+		text-align:center;
+	}
+  </style>
+  
+<body style="margin:0;padding:0;">
+
+<div style="padding:5px 5px 12px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<ul id="myTab2" class="nav nav-tabs" style="background:#fff;">
+	   <li  class="active">
+		  <a href="#consumer" data-toggle="tab">
+			 个人认证
+		  </a>
+	   </li>
+	   <li><a href="{:U('Home/Mobile/menu')}?domenu=cprz&user_id={$user_id}&token={$token}&cs_id={$cs_id}&cp_id={$cp_id}&mn_id={$mn_id}" >企业认证</a></li>
+	   
+	</ul>
+	<div id="myTabContent" class="tab-content">
+		<!--div style="color: #F16265;text-align: center;padding: 10px;">本业务正在调试中，请稍后再进行个人实名实证，给您带来的不便，敬请凉解！</div-->
+		<div class="tab-pane fade in active" id="consumer" style="padding-top:5px;background:#fff;">
+			<if condition="$user[is_check_idcard] eq 1">
+			<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+				你已经认证通过了。
+			</div>
+			</if>
+			<if condition="$user[is_check_idcard] eq 2">
+			<div class="alert alert-info col-md-8 col-md-offset-2">
+				审核结果：{$company[check_remark]}
+			</div>
+			</if>
+			<eq name="user.is_check_idcard" value='1'>
+			<div class="form-group field-user-realname has-success">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:32%;text-align:right;" for="user-realname">姓 名 <span class="requery">*</span></label>
+				<span style="width:60%;float:left;padding:5px;border:0px;border-bottom:1px solid #ccc;">{$user[realname]|substr_cut=###}</span>
+				
+			</div>                        
+			                       
+			<div class="form-group field-user-idcard_id has-success">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:32%;text-align:right;" for="user-idcard_id">身份证号<span class="requery">*</span></label>
+				<span style="width:60%;float:left;padding:5px;border:0px;border-bottom:1px solid #ccc;">{$user[idcard_id]|substr_cut=###}</span>
+				
+			</div>
+			<div style="clear:both;"></div>
+			</eq>
+			<neq name="user.is_check_idcard" value='1'>
+			<form id="addrz_form" class="form-horizontal" role="form" style="width:90%;">
+			
+			<input type="hidden" id="user_id" name="user_id" value="{$user_id}">
+			<input type="hidden" id="token" name="token" value="{$token}">
+
+			<div class="form-group field-user-realname has-success">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:32%;text-align:right;" for="user-realname">姓 名 <span class="requery">*</span></label>
+				<input type="text" id="realname" name="realname" value="{$user[realname]}" style="width:60%;float:left;padding:5px;border:0px;border-bottom:1px solid #ccc;" >
+				
+			</div>                        
+			<div class="form-group field-user-sex has-success">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:32%;text-align:right;" for="user-sex">性 别 <span class="requery">*</span></label>
+
+				<div id="user-sex"><label class="radio-inline" style="width:20%;"><input type="radio" class="sex" name="sex" value="1" <if condition="$user[sex] eq 1">checked</if>/> 男</label>
+				<label class="radio-inline" style="width:20%;"><input type="radio" class="sex" name="sex" value="2" <if condition="$user[sex] eq 2">checked</if>/> 女</label></div>
+			</div>
+			<div class="form-group field-user-company_license has-success" style="margin-left: 30px;">
+				<label class="control-label col-sm-3" for="user-company_license">地址 <span class="requery">*</span></label>
+				<div class="col-sm-5" id="address_select" style="margin-left: 40px;">
+					<select name="provinceid" id="provinceid" onchange="loadRegion('provinceid',2,'cityid','{:U('Home/Ajax/getRegion')}');">
+						<option value="0">选择省份</option>
+						<volist name="province" id="vp">
+						<option value="{$vp.provinceid}">{$vp.province}</option>
+						</volist>
+					</select>
+					<br>
+					<select name="cityid" id="cityid" onchange="loadRegion('cityid',3,'areaid','{:U('Home/Ajax/getRegion')}');">
+						<option value="0">选择城市</option>
+						<volist name="cities" id="vc">
+						<option value="{$vc.id}">{$vc.name}</option>
+						</volist>
+					</select>
+					<br>
+					<select name="areaid" id="areaid" style="margin-bottom:10px;">
+						<option value="0">选择区县</option>
+						<volist name="areas" id="va">
+						<option value="{$va.id}">{$va.name}</option>
+						</volist>
+					</select>
+				</div>
+				<label style="text-align: center;color: #F16265;width: 100%;">请按身份证上面的地址选择对应的省市区，否则审核将不予以通过。</label>
+			</div>
+			<div class="form-group field-user-idcard_id has-success">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:32%;text-align:right;" for="user-idcard_id">身份证号<span class="requery">*</span></label>
+
+				<input type="text" id="idcard_id" name="idcard_id" value="{$user[idcard_id]}" style="width:60%;float:left;padding:5px;border:0px;border-bottom:1px solid #ccc;">
+			</div>                        
+
+			<div class="form-group">
+				<label class="control-label col-sm-2" style="float:left;margin-top:5px;width:35%;text-align:right;" for="user-idcard_id">上传身份证 <span class="requery">*</span></label><br><br>
+				<div class="col-sm-5">
+					<!--身份证正面-->
+					<input type="hidden" id="idcard_face" name="idcard_face" value="{$user[idcard_face]}"/>
+								
+					<p class="showimg" id="showimg"></p>
+					<if condition="$user[idcard_face] eq ''">
+					<p class="showimg" id="showimg_1">
+						<img src="__PUBLIC__/images/idcard_face.jpg" height="100" border="0" />
+					</p>
+					</if>
+					<if condition="$user[idcard_face] neq ''">
+					<p class="showimg">
+						<span id="myface"><img id="idcard_face" src="__ROOT__/{$user[idcard_face]}" width="130" height="100" border="0" /></span>
+						
+						<neq name="user.is_check_idcard" value='1'>
+						<input type="button" id="delface" name="delface" value="删除"/>
+						</neq>
+					</p>
+					</if>
+					
+					<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+					<p><input type="file" class="file" id="img">
+					<label class="filebtn" for="img" title="JPG,GIF,PNG"><img width="25px" src="__PUBLIC__/images/camera.png"/>&nbsp;&nbsp;请选择正面图片</label></p>
+					</if>
+					
+					<!--身份证反面-->
+					<input type="hidden" id="idcard_back" name="idcard_back" value="{$user[idcard_back]}">
+					<p class="showimg" id="showimg2"></p>	
+					<if condition="$user[idcard_back] eq ''">
+					<p class="showimg" id="showimg_2">
+						<img src="__PUBLIC__/images/idcard_back.jpg" height="100" border="0"/>
+					</p>
+					</if>
+					<if condition="$user[idcard_back] neq ''">
+					<p class="showimg">
+						<span id="myback"><img id="idcard_back" src="__ROOT__/{$user[idcard_back]}" width="130" height="100" border="0" /></span>
+						<neq name="user.is_check_idcard" value='1'>
+						<input type="button" id="delback" name="delback" value="删除"/>
+						</neq>
+					</p>
+					</if>
+					
+					<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+					<p><input type="file" class="file" id="img2">
+					<label class="filebtn" for="img2" title="JPG,GIF,PNG"><img width="25px" src="__PUBLIC__/images/camera.png"/>&nbsp;&nbsp;请选择反面图片</label></p>
+					</if>
+					
+				</div>
+				
+			</div>
+				 
+			<div class="form-group" align="center">
+				<div class="col-md-3"></div>
+				<div class="col-md-6">
+					<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2"><input type="button" id="addrz" class="btn btn-primary" value="确定提交"></if>
+					
+				</div>
+			</div>
+			</form>
+			</neq>
+		</div>
+		
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+		var myemail = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+		//var idnum = /^(\d{15}$|^\d{18}$|^\d{17}(\d|X|x))$/;
+		var idnum = /^(\d{15}$|^\d{17}(\d|X|x))$/;
+		
+		//执行实名认证
+		$('#addrz').click(function(){
+		
+		//姓名不能不空
+		if($(':input[name="realname"]').val()==''){
+			alert("姓名不能不空");
+			
+			$(':input[name="realname"]').focus();return false;
+		}
+		//判断地址
+		var p=$("#provinceid option:selected").val();
+		var c=$("#cityid option:selected").val();
+		var a=$("#areaid option:selected").val();
+		if(p==0||c==0||a==0){
+			alert("省市区县不能为空，请选择！");
+			return false;
+		}
+		//身份证号不有为空
+		if($(':input[name="idcard_id"]').val()==''){
+			alert("身份证号不有为空");
+			
+			$(':input[name="idcard_id"]').focus();return false;
+		}
+		//判断身份证格式
+		if(!idnum.test($(':input[name="idcard_id"]').val())){
+			alert("身份证号格式错误");
+			$(':input[name="idcard_id"]').focus();return false;
+		}
+		//请上传身份证正面
+		if($(':input[name="idcard_face"]').val()==''){
+			alert("请上传身份证正面");
+			
+			return false;
+		}
+		//请上传身份证反面
+		if($(':input[name="idcard_back"]').val()==''){
+			alert("请上传身份证反面");
+			
+			return false;
+		}
+		
+		$.get("{:U('Home/Mobile/addrz')}?"+$('#addrz_form').serialize(), function(data,status){
+			console.log(data);
+			if(data>=0){
+			alert('提交认证成功，请等待审核');
+			//window.location.reload();
+			}else if(data==-2){
+				alert("同一个身份证认证次数已达到{:C('idcard_num')}次，不能再提交");
+			}
+			else{
+				alert('提交认证失败');
+			}
+			
+		});
+		})
+		
+		//删除正面
+		$('#delface').click(function(){
+			var user_id=$('#user_id').val();
+			var token=$('#token').val();
+			$.get("{:U('Home/Mobile/picdel')}?user_id="+user_id+"&token="+token+"&type=1&pic="+$('#myface img').attr("src"), function(data,status){
+				console.log(data);
+				if(data>=0){
+				alert('删除正面成功');
+				$('#myface').html('');
+				window.location.reload();
+				}
+				else if(data=-2){
+				alert('用户非法操作。');
+				window.location.reload();
+				}else{
+				alert('删除失败');
+				window.location.reload();
+				}
+				
+			});
+		});
+		
+		//删除反面
+		$('#delback').click(function(){
+			$.get("{:U('Home/Mobile/picdel')}?user_id="+$('#user_id').val()+"&token="+$('#token').val()+"&type=2&pic="+$('#myface img').attr("src"), function(data,status){
+				console.log(data);
+				if(data>=0){
+				alert('删除正面成功');
+				$('#myback').html('');
+				window.location.reload();
+				}
+				else if(data=-2){
+				alert('用户非法操作。');
+				window.location.reload();
+				}else{
+				alert('删除失败');
+				window.location.reload();
+				}
+				
+			});
+		});
+		
+	});
+	
+	function loadRegion(sel,type_id,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val(),type:type_id},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+</script>
+
+</html>

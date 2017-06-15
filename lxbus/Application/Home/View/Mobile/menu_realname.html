@@ -1,0 +1,34 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:0px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<div class="mlist" style="margin-bottom:10px;">
+		<p style="font-size:1.3em;"><span class="sp1">用户真名：</span><span class="sp2">{$user[realname]}</span></p>
+	</div>
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	修改用户真名请到实名认证菜单操作。
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+	
+	
+	});
+</script>
+
+</html>

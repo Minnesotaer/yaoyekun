@@ -1,0 +1,49 @@
+<include file="Public/header" title="后台主页" />
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<div id="page-wrapper">
+	<form method="post" action="{:U('doupdatecat')}">
+        <div class="form-group">
+            <label for="post-ct_name">分类名称</label>
+            <input type="text" name="ct_name" class="form-control" id="post-ct_name" placeholder="输入分类名称" value="{$cms_cat[ct_name]}">
+			<input type="hidden" name="ct_id" value="{$cms_cat[ct_id]}"> 
+        </div>
+        <div class="form-group">
+            <label for="post-ct_parent_id">上级分类</label>
+            <select name="ct_parent_id" id="post-ct_parent_id" class="form-control">
+				<option value="0">选择分类</option>
+                <volist name="cat" id="v">
+                    <option value="{$v.ct_id}" <if condition="$v[ct_id] eq $cms_cat[ct_parent_id]">selected</if>>{$v.ct_name}</option>
+                </volist>
+            </select>
+        </div>
+		<div class="form-group">
+            <label for="post-ct_sort">排序（越大越靠前）</label>
+            <input type="text" name="ct_sort" class="form-control" id="post-ct_sort" placeholder="输入文章标题" value="{$cms_cat[ct_sort]}">
+        </div>
+
+
+        <button type="submit" class="btn btn-default">提交</button>
+    </form>
+	</div>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<
+<include file="Public/footer" />

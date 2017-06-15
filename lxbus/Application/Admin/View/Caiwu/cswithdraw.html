@@ -1,0 +1,124 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>消费者提现管理</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或名称">
+	<select id="status" name="status">
+		<option value="">选择状态</option>
+		<option value="0" <if condition="$status eq '0'">selected</if>>未审核</option>
+		<option value="1" <if condition="$status eq '1'">selected</if>>已审核</option>
+	</select>
+	开始日期:<input type="date" name="fromdate" id="fromdate" <if condition="$fromdate gt 0">value="{$fromdate|date='Y-m-d',###}"</if> placeholder="开始日期">
+	结束日期:<input type="date" name="todate" id="todate" <if condition="$todate gt 0">value="{$todate|date='Y-m-d',###}"</if> placeholder="结束日期">
+	<input type="button" name="serach" id="search" value="搜索">(日期格式：2016-01-10)
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+         <th>消费者编号</th>
+         <th>用户手机</th>
+         <th>用户名称</th>
+         <th>金额</th>
+         <th>银行</th>
+		 <th>户主</th>
+		 <th>卡号</th>
+		 <th>添加时间</th>
+		 <th>状态</th>
+		 <th>审核时间</th>
+		 <th></th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="withdraw" item="v">
+      <tr>
+         <td>{$v.consumer_id}</td>
+         <td>{$v.phone}</td>
+         <td>{$v.realname}</td>
+         <td>{$v.amount}</td>
+         <td>{$v.bank_name}</td>
+         <td>{$v.bank_user}</td>
+         <td><span style="color:blue; font-weight:bold; font-size:18px;">{$v.bank_num|rebank=###}</span></td>
+         <td>{$v.create_time|date='Y-m-d H:i:s',###}</td>
+         <td>{$v.status|getCheckstausdes=###}</td>
+         <td><if condition="$v[check_time] eq 0">--<else/>{$v.check_time|date='Y-m-d H:i',###}</if></td>
+         <td  align="center">
+		<div class="btn-group">
+        <button <if condition="$v['status'] neq 0">disabled='disabled' class="btn btn-xs btn-primary" <else /> class="btn btn-success btn-xs dropdown-toggle" </if>type="button"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" > 操作 <span class="caret"></span> </button>
+        <ul class="dropdown-menu">
+            <li><a class="checkWithdraw" data-id="{$v.id}">审核</a></li>
+			<li><a data-id="{$v.id}" class="refuseOrder">拒绝</a></li>
+        </ul>
+        </div></td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="11" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('.checkWithdraw').click(function(){
+	console.log($(this).attr('data-id'));
+	var url = "{:U('dowithdraw')}?w_id="+$(this).attr('data-id');
+	var text = $( this ).text();
+	var r=confirm('你确定要'+text+'这个订单吗？')
+	if (r==true){
+		$.get(url, function(data,status){
+		if(data=='success'){
+			alert('审核成功');
+			location.reload();
+		}
+		else{
+			alert('error:'+data);
+		}
+		});
+		}
+	});
+	
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	var status=$('#status').val();
+	var fromdate=$('#fromdate').val();
+	var todate=$('#todate').val();
+	
+	var url = "{:U('cswithdraw')}?keyword="+keyword+"&status="+status+"&fromdate="+fromdate+"&todate="+todate;
+	window.location.href=url;
+	});
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var status=$('#status').val();
+	var fromdate=$('#fromdate').val();
+	var todate=$('#todate').val();
+	var url = "{:U('cswithdrawtoexcel')}?keyword="+keyword+"&status="+status+"&fromdate="+fromdate+"&todate="+todate;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

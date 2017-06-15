@@ -1,0 +1,139 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:0px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<div class="mlist" style="margin-bottom:10px;">
+		<form>
+		<input type="hidden" name="user_id" id="user_id" value="{$user_id}"/>
+		<input type="hidden" name="token" id="token" value="{$token}"/>
+		<p style="font-size:1.3em;"><span class="sp1">邮箱：</span><span class="sp2"><input type="text" name="email" id="email" value="{$user[email]}" style="border:0px;border-bottom:1px solid #ccc;"></span></p>
+		
+		
+		<p style="font-size:1.2em;"><span class="sp1">密码：</span><span class="sp2"><input type="password" name="password" id="password" placeholder="你的登录密码" style="border:0px;border-bottom:1px solid #ccc;"></span></p>
+		
+		<p>
+		<div class="col-sm-offset-4 col-sm-4">
+		  <input type="button" id="addemailok" class="btn btn-primary btn-block" style="width:30%;margin-left:30%;" value="提交修改"/>
+		</div>
+		</p>
+		</form>
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+		//修改email
+		$('#addemailok').click(function(){
+		if($('#email').val()==''){
+			alert('邮箱不能为空');
+			$("#email").focus();
+			return false;
+		}
+		if(!$('#email').val().match(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/)){
+				alert('邮箱格式错误');
+				$("#email").focus();
+				return false;
+			}
+		
+		if($('#password').val()==''){
+			alert('密码不能为空');
+			$("#password").focus();
+			return false;
+		}
+		$.get("{:U('Home/Mobile/addemail')}?"+$('form').serialize(), function(data){
+			var json=jQuery.parseJSON(data);
+			//alert(json.status);
+			if(json.status==1){
+				alert('修改email成功');
+				location.href ="{:U('Home/Mobile/menu')}?domenu=email&user_id={$user_id}&token={$token}";
+			}
+			else{
+				if(json.status==2)
+					alert('邮箱或验证码不能为空');
+				else if(json.status==3)
+					alert('邮箱已经被使用');
+				else if(json.status==4)
+					alert('更换了邮箱请重新获取验证码');
+				else if(json.status==5)
+					alert('验证码错误');
+				else if(json.status==6)
+					alert('密码错误');
+				else
+					alert('修改emai失败');
+			}
+			
+		});
+		});
+	
+	});
+	//发送邮箱验证码
+	function sendemail(val){
+		var email=$('#email').val();
+		//alert(email);
+		if(email==''){
+			alert('邮箱不能为空');
+			$("#email").focus();
+		}
+		else {
+			if(!email.match(/^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/)){
+				alert('邮箱格式错误');
+				$("#email").focus();
+			}
+			else{
+				$.get("{:U('Home/Mobile/check_email')}?user_id={$user_id}&token={$token}&email="+email,function(data){
+					console.log(data);
+					var json=jQuery.parseJSON(data);
+					if(json.status==-1){
+						alert('邮箱已经被使用！');
+						$("#email").focus();
+					}else if(json.status==-2){
+						alert('这个邮箱已经认证了！');
+					}
+					else if(json.status==-3){
+						alert('非法操作！');
+					}
+					else if(json.status>=0){
+						alert("已经发送,验证码为:"+json.mycode);
+						settime(val);
+					}
+				});
+			}
+		}
+	}
+
+
+	//60秒不能点击
+	var countdown=60;//必须放在函数外	
+	function settime(val) { 
+
+		if (countdown == 0) { 
+			val.removeAttribute("disabled");
+			val.value="发送验证码"; 
+			countdown = 60; 
+		}else {
+			val.setAttribute("disabled", true); 
+			val.value="重新发送(" + countdown + ")"; 
+			countdown--; 
+			
+			setTimeout(function() { 
+				settime(val) 
+			},1000) 
+		} 
+	}
+</script>
+
+</html>

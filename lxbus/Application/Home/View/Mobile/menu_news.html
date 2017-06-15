@@ -1,0 +1,38 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+<style>
+.mypage{float:left;text-align:center;margin-top:10px;width:100%;}
+.mypage a{padding:2px 6px;margin:3px; border:1px solid #008fd7;}
+.mypage span{padding:2px 6px;margin:3px;border:1px solid #ccc;}
+</style>  
+<body style="margin:0;padding:0;">
+
+<div style="padding:12px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<volist name="artlist2" id="art">
+	<div style="float:left;width:95%;padding:5px;border-bottom:1px dotted #ccc;">
+		<a href="{:U('Home/Mobile/showarticle',array('id'=>$art[cms_id]))}" style="float:left;width:100%;display:black;">{$art[cms_title]}</a>
+	</div>
+	</volist>
+	<div class="mypage">{$page}</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	
+	</if>
+</div>
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+	
+	
+	});
+</script>
+
+</html>

@@ -1,0 +1,113 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+	.app{
+		width:94%;
+		height:auto;
+		overflow:hidden;
+		margin:20px auto;
+		padding:10px 20px;
+		border:#ccc solid 1px;
+	}
+	.app dl{
+		margin:10px 0;
+		border:#ccc solid 1px;
+		height:auto;
+		overflow:hidden;
+	}
+	.app dl dt{
+		display:blick;
+		height:36px;
+		line-height:36px;
+		background:#e6e6e6;
+		text-index:10px;
+		padding:0 10px;
+	}
+	.app dl dd{
+		float:left;
+		margin:0 10px;
+		padding:10px 15px;
+	}
+
+
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+	<div style="font-size:22px;border-bottom:1px solid #ccc;">节点列表</div>
+    <div class="table-responsive">
+			<form action="{:U('Rbac/setAccess')}" method="post">
+            <a href="{:U('Rbac/role')}" class="btn btn-primary">返回</a>
+			<foreach name="node" item="app">
+				<div class="app">
+					<p>
+						{$app.title} <input type="checkbox" name="access[]" value="{$app.id}_1" class="level1" <if condition='$app["access"]'>checked='checked'</if> />
+					</p>
+					<foreach name="app.child" item="action">
+						<dl>
+							<dt style="color:#f00;">
+								{$action.title} <input type="checkbox" name="access[]" value="{$action.id}_2" class="level2" <if condition='$action["access"]'>checked="checked"</if> />
+							</dt>
+							<foreach name="action.child" item="method">
+								<dd>
+									<span>{$method.title}</span> <input type="checkbox" name="access[]" value="{$method.id}_3" class="level3" <if condition='$method["access"]'>checked="checked"</if> />
+								</dd>
+							</foreach>
+						</dl>
+						
+					</foreach>
+				</div>
+			</foreach>
+			<input type="hidden" name="rid" value="{$rid}" />
+			<button class="btn btn-primary">保存</button>
+			</form>
+          </div> 
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+	$(function(){
+            $('.level1').click(function(){
+                if($(this).prop('checked')){
+                    $(this).parent().find("input[type='checkbox']").prop('checked',true);
+                }else{
+                    $(this).parent().find("input[type='checkbox']").prop('checked',false);
+                }   
+            })
+            $('.level2').click(function(){
+                if($(this).prop('checked')){
+                    $(this).parent().next().find("input[type='checkbox']").prop('checked',true);
+                }else{
+                   $(this).parent().next().find("input[type='checkbox']").prop('checked',false); 
+                }
+                
+            })
+            $('.level3').click(function(){
+                var is = $(this).prop('checked');
+                if(is){
+                    $(this).prop('checked',true);
+                }else{
+                    $(this).prop('checked',false);
+                }
+            })
+        })
+</script>
+<include file="Public/footer" />

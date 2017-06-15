@@ -1,0 +1,147 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:0px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<div class="mlist" style="margin-bottom:10px;">
+		<form>
+		<input type="hidden" name="user_id" id="user_id" value="{$user_id}"/>
+		<input type="hidden" name="token" id="token" value="{$token}"/>
+		<p style="font-size:1.2em;"><span class="sp1">手机：</span><span class="sp2"><input type="text" name="phone" id="phone" value="{$user[phone]}" style="border:0px;border-bottom:1px solid #ccc;"></span></p>
+		
+		<p style="font-size:1.2em;"><span class="sp1">验证码：</span><span class="sp2"><input type="text" name="phonecode" id="phonecode" style="border:0px;border-bottom:1px solid #ccc;width:30%;"></span>
+		<input type="button" id="sendphonecode" onclick="sendcode(this);" value="发送验证码 " class="btn btn-default" style="width:30%;"></p>
+		
+		<p style="font-size:1.2em;"><span class="sp1">密码：</span><span class="sp2"><input type="password" name="password" id="password" placeholder="你的登录密码" style="border:0px;border-bottom:1px solid #ccc;"></span></p>
+		<p>
+		<div class="col-sm-offset-4 col-sm-4">
+		  <input type="button" id="addphoneok" class="btn btn-primary btn-block" style="width:30%;margin-left:30%;" value="提交修改"/>
+		</div>
+		</p>
+		</form>
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+		//修改手机		
+		
+		$('#addphoneok').click(function(){
+		
+		if($('#phone').val()==''){
+			alert('手机不能为空');
+			$("#phone").focus();
+			return false;
+		}
+		if(!$('#phone').val().match(/^((1[3-8]{1})+\d{9})$/)){
+				alert('手机格式错误');
+				$("#phone").focus();
+				return false;
+			}
+		
+		if($('#phonecode').val()==''){
+			alert('验证码不能为空');
+			$("#emailcode").focus();
+			return false;
+		}
+		
+		if($('#password').val()==''){
+			alert('密码不能为空');
+			$("#password").focus();
+			return false;
+		}
+		
+		$.get("{:U('Home/Mobile/addphone')}?"+$('form').serialize(), function(data){
+			var json=jQuery.parseJSON(data);
+			//alert(json.status);
+			if(json.status==1){
+				alert('修改手机成功');
+				location.href ="{:U('Home/Mobile/menu')}?domenu=phone&user_id={$user_id}&token={$token}";
+			}
+			else{
+				if(json.status==2)
+					alert('手机号或验证码不能为空');
+				else if(json.status==3)
+					alert('手机号已经被使用');
+				//else if(json.status==4)
+					//alert('更换了手机请重新获取验证码');
+				else if(json.status==5)
+					alert('验证码错误');
+				else if(json.status==6)
+					alert('密码错误');
+				else
+					alert('修改手机失败');
+			}
+			
+		});
+		});	
+	
+	});
+	//发送手机验证码
+	function sendcode(val){
+		var phone=$('#phone').val();
+		if(phone==''){
+			alert('手机号不能为空');
+			$("#phone").focus();
+		}
+		else {
+			if(!phone.match(/^((1[3-8]{1})+\d{9})$/)){
+				alert('手机号格式错误');
+				$("#phone").focus();
+			}
+			else{
+				$.get("{:U('Home/Mobile/check_phone')}?user_id={$user_id}&token={$token}&phone="+phone,function(data){
+					var json=jQuery.parseJSON(data);
+					if(json.status==-1){
+						alert('你手机已经被使用！');
+						$("#phone").focus();
+					}else if(json.status==-2){
+						alert('这个手机号已经认证了！');
+					}
+					else if(json.status==-3){
+						alert('非法操作！');
+					}
+					else if(json.status>=0){
+						alert('验证码已经发送！');
+						//alert("验证码为:"+json.mycode);
+						settime(val);
+					}
+				});
+			}
+		}
+	}
+
+	//60秒不能点击
+	var countdown=60;//必须放在函数外	
+	function settime(val) { 
+
+		if (countdown == 0) { 
+			val.removeAttribute("disabled");
+			val.value="发送验证码"; 
+			countdown = 60; 
+		}else {
+			val.setAttribute("disabled", true); 
+			val.value="重新发送(" + countdown + ")"; 
+			countdown--; 
+			
+			setTimeout(function() { 
+				settime(val) 
+			},1000) 
+		} 
+	}
+</script>
+
+</html>

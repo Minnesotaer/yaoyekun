@@ -1,0 +1,117 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>商家申请管理<span style="margin-left:10px;color:#cc0000;">({$usernum}条记录)</span></caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="店铺或企业名称/手机"><input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+          <th>编号</th>
+          <th>用户手机</th>
+          <th>企业名称</th>
+          <th>店铺名称</th>
+		  <th>商家地址</th>
+          <th>创建时间</th>
+          <th>审核时间</th>
+          <th>审核说明</th>
+          <th>审核状态</th>
+		  <th>操作</th>
+        
+        
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="applylist" item="v">
+      <tr id="user-{$v.id}">
+               <td>{$v.id}</td>
+         <td>{$v.myphone}</td>
+         <td>{$v.company_id|getkbcompanyname=###}</td>
+         <td>{$v.name}</td>
+		 <td>{$v.province_id|getprovincename=###}{$v.city_id|getcityname=###}{$v.area_id|getareaname=###}{$v.address}</td> 
+		   <td>{$v.create_time|date="Y-m-d H:m",###}</td>
+		   <td><if condition="$v[check_time] gt 0">{$v.check_time|date="Y-m-d H:m",###}<else/>--</if></td>
+		   <td>{$v.check_remark}</td>
+		   <td>{$v.is_check|getkbcheck=###}</td>
+   <td><a href="{:U('Admin/Koubei/myshopapply')}?id={$v.id}">审核</a>
+			</td>
+	  </foreach>
+	  <tr>
+		<td colspan="15" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+
+
+
+<script>
+$(document).ready(function(e) {
+
+	
+	
+	//搜索
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('shopapply')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	
+	
+
+});
+function loadRegion(sel,type_id,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val(),type:type_id},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+
+</script>
+<include file="Public/footer" />

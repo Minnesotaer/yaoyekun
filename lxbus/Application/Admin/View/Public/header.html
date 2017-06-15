@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>报账宝 | 后台管理</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- Bootstrap 3.3.5 -->
+  <link rel="stylesheet" href="__PUBLIC__/bootstrap/css/bootstrap.min.css">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="__PUBLIC__/static/font-awesome/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="__PUBLIC__/static/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="__PUBLIC__/dist/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="__PUBLIC__/dist/css/skins/_all-skins.min.css">
+  <!-- iCheck -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/iCheck/flat/blue.css">
+  <!-- Morris chart -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/morris/morris.css">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+  <!-- Date Picker -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/datepicker/datepicker3.css">
+  <!-- Daterange picker -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/daterangepicker/daterangepicker-bs3.css">
+  <!-- bootstrap wysihtml5 - text editor -->
+  <link rel="stylesheet" href="__PUBLIC__/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+  <!-- jQuery 2.2.0 -->
+  <script src="__PUBLIC__/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+  <header class="main-header">
+    <!-- Logo -->
+    <a href="{:U('Admin/Index/index')}" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>B</b>ZB</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>报账宝</b>管理后台</span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          
+          <!-- Notifications: style can be found in dropdown.less -->
+          
+          <!-- Tasks: style can be found in dropdown.less -->
+          
+          <!-- User Account: style can be found in dropdown.less -->
+          <li>
+              <p class="navbar-text">你好,{:session('admin_name')}</p>
+			  {$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][addcat]}
+          </li>
+          <!-- Control Sidebar Toggle Button -->
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-gears"></i></a>
+			<ul class="dropdown-menu">
+              <!-- User image -->
+              <!-- Menu Body -->
+              <!-- Menu Footer-->
+              <li>
+                  <a href="{:U('Admin/Index/editad')}" class="btn btn-default btn-flat">修改密码</a>
+                </li>
+                <li>
+                  <a href="{:U('Admin/Login/logout')}" class="btn btn-default btn-flat">退出登录</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+      <!-- Sidebar user panel -->
+      <!-- search form -->
+      <!-- /.search form -->
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu">
+        <li class="header">MAIN NAVIGATION</li>
+        <li class="active">
+          <a href="{:U('Admin/Index/index')}">
+            <i class="fa fa-dashboard"></i> <span>首页</span>
+          </a>
+        </li>
+		<php>
+			$mycontroller=$Think.CONTROLLER_NAME;
+			$myaction=$Think.ACTION_NAME;
+
+		</php>
+		<li <if condition="$mycontroller eq 'User'">class="treeview active" <else/>class="treeview"</if>
+		<if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][USER]">style="display:none;"</if>>
+		<a href="#"><i class="fa  fa-group  text-primary fa-lg" ></i> <span>用户管理</span></a>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][INDEX] neq 3">style="display:none;"</if>>
+		<li><a href="{:U('User/index')}" <if condition="$myaction eq 'index'">style="color:#fff;" </if>><i class="fa fa-user-plus"></i>登录用户</a></li>
+		</ul>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][CS] neq 7">style="display:none;"</if>>
+		<li><a href="{:U('User/message')}" <if condition="$myaction eq 'cs'">style="color:#fff;" </if>><i class="fa fa-user"></i>消息管理</a></li>
+		</ul>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][CP] neq 10">style="display:none;"</if>>
+		<li><a href="{:U('User/photo')}" <if condition="$myaction eq 'cp'">style="color:#fff;" </if>><i class="fa fa-user-secret"></i>图片上传</a></li>
+		</ul>
+
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][MN] neq 13">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/mn')}" <if condition="$myaction eq 'mn'">style="color:#fff;" </if>><i class="fa fa-briefcase"></i>业务用户</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][MNUPGRADE] neq 15">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/mnupgrade')}" <if condition="$myaction eq 'mnupgrade'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>业务员升级审核</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][CPAPPLY] neq 17">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/cpapply')}" <if condition="$myaction eq 'cpapply'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>申请商家审核</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][USERAPPLY] neq 19">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/userapply')}" <if condition="$myaction eq 'userapply'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>个人认证审核</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][USER][CPRZ] neq 21">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/cprz')}" <if condition="$myaction eq 'cprz'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>企业认证审核</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('User/edittuijian')}" <if condition="$myaction eq 'edittuijian'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>修改推荐关系</a></li>-->
+		<!--</ul>-->
+		
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Bzb'">class="treeview active" <else/>class="treeview"</if> 
+		<if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][BZB]">style="display:none;"</if>>
+		<!--<a href="#"><i class="fa  fa-bitcoin text-primary  fa-lg" ></i> <span>报账管理</span></a>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][BZB][BZ] neq 24">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Bzb/bz')}" <if condition="$myaction eq 'bz'">style="color:#fff;" </if>><i class="fa  fa-list"></i>记录查看</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][BZB][QUEUE] neq 25">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Bzb/queue')}" <if condition="$myaction eq 'queue'">style="color:#fff;" </if>><i class="fa fa-list-ol"></i>报账队列</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][BZB][ORDER] neq 26">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Bzb/order')}" <if condition="$myaction eq 'order'">style="color:#fff;" </if>><i class="fa-bar-chart fa"></i>查看订单</a></li>-->
+		<!--</ul>	-->
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Caiwu'">class="treeview active" <else/>class="treeview"</if> <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][CAIWU]">style="display:none;"</if>>
+		<!--<a href="#"><i class="fa fa-money text-primary fa-lg" ></i> <span>财务管理</span></a>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][USERBANK] neq 28">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/userbank')}" <if condition="$myaction eq 'userbank'">style="color:#fff;" </if>><i class="fa fa-credit-card"></i>用户银行卡</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CSWITHDRAW] neq 29">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/cswithdraw')}" <if condition="$myaction eq 'cswithdraw'">style="color:#fff;" </if>><i class="fa fa-rmb"></i>消费者提现管理</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CSCAIWUYIDONG] neq 41">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/cscaiwuyidong')}" <if condition="$myaction eq 'cscaiwuyidong'">style="color:#fff;" </if>><i class="fa fa-rmb"></i>消费者财务异动</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CSYUE] neq 47">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/csyue')}" <if condition="$myaction eq 'csyue'">style="color:#fff;" </if>><i class="fa fa-rmb"></i>消费者余额</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][MNWITHDRAW] neq 32">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/mnwithdraw')}" <if condition="$myaction eq 'mnwithdraw'">style="color:#fff;" </if>><i class="fa fa-money"></i>业务经理提现管理</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][MNCAIWUYIDONG] neq 45">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/mncaiwuyidong')}" <if condition="$myaction eq 'mncaiwuyidong'">style="color:#fff;" </if>><i class="fa fa-money"></i>业务经理财务异动</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][MNYUE] neq 51">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/mnyue')}" <if condition="$myaction eq 'mnyue'">style="color:#fff;" </if>><i class="fa fa-money"></i>业务经理余额</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CHARGE] neq 38">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/charge')}" <if condition="$myaction eq 'charge'">style="color:#fff;" </if>><i class="fa fa-usd"></i>商家充值管理</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CPWITHDRAW] neq 35">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/cpwithdraw')}" <if condition="$myaction eq 'cpwithdraw'">style="color:#fff;" </if>><i class="fa fa-usd"></i>商家提现管理</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CPCAIWUYIDONG] neq 43">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/cpcaiwuyidong')}" <if condition="$myaction eq 'cpcaiwuyidong'">style="color:#fff;" </if>><i class="fa fa-usd"></i>商家财务异动</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][CPYUE] neq 49">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/cpyue')}" <if condition="$myaction eq 'cpyue'">style="color:#fff;" </if>><i class="fa fa-usd"></i>商家余额</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][FOUNDER] neq 53">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/founder')}" <if condition="$myaction eq 'founder'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>慈善基金</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][REQUEUE] neq 55">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/requeue')}" <if condition="$myaction eq 'requeue'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>重复购券</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][PROFIT] neq 57">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/profit')}" <if condition="$myaction eq 'profit'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>平台利润</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][TAX] neq 59">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/tax')}" <if condition="$myaction eq 'tax'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>营业税</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][WEIHU] neq 61">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/weihu')}" <if condition="$myaction eq 'weihu'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>平台维护</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][FGS] neq 63">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/fgs')}" <if condition="$myaction eq 'fgs'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>分公司津贴</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][SMS] neq 65">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/sms')}" <if condition="$myaction eq 'sms'">style="color:#fff;" </if>><i class="fa fa-circle-o"></i>信息费</a>-->
+		<!--</li>-->
+		<!--</ul>-->
+		<!---->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Caiwu/changetuijianmoney')}" <if condition="$myaction eq 'changetuijianmoney'">style="color:#fff;" </if>><i class="fa fa-street-view"></i>修改推荐收入</a></li>-->
+		<!--</ul>-->
+		
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Fengongshi'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][CAIWU][FENGONGSHI]">style="display:none;"</if>>
+		<!--<a href="#"><i class="fa fa-building  text-primary fa-lg" ></i> <span>分公司管理</span></a>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][FENGONGSHI][ADD] neq 71">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Fengongshi/add')}" <if condition="$mycontroller eq 'Fengongshi' and $myaction eq 'add'">style="color:#fff;" </if>><i class="fa fa-cube"></i>添加分公司</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][FENGONGSHI][FGSLIST] neq 68">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Fengongshi/fgslist')}" <if condition="$myaction eq 'fgslist'">style="color:#fff;" </if>><i class="fa  fa-database"></i>分公司管理</a></li>-->
+		<!--</ul>-->
+				
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Wenzhang'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG]">style="display:none;"</if>>
+		<a href="#"><i class="fa fa-file-text-o  text-primary fa-lg" ></i> <span>文章管理</span></a>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][ADDCAT] neq 87">style="display:none;"</if>>
+		<li><a href="{:U('Wenzhang/addcat')}" <if condition="$myaction eq 'addcat'">style="color:#fff;" </if>><i class="fa fa-edit"></i>添加分类</a></li>
+		</ul>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][WENZHANGCAT] neq 86">style="display:none;"</if>>
+		<li><a href="{:U('Wenzhang/wenzhangcat')}" <if condition="$myaction eq 'wenzhangcat'">style="color:#fff;" </if>><i class="fa  fa-list"></i>分类管理</a></li>
+		</ul>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][ADD] neq 81">style="display:none;"</if>>
+		<li><a href="{:U('Wenzhang/add')}" <if condition="$mycontroller eq 'Wenzhang' and $myaction eq 'add'">style="color:#fff;" </if>><i class="fa fa-file-text-o"></i>添加文章</a></li>
+		</ul>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][WENZHANG] neq 77">style="display:none;"</if>>
+		<li><a href="{:U('Wenzhang/wenzhang')}" <if condition="$myaction eq 'wenzhang'">style="color:#fff;" </if>><i class="fa  fa-file-word-o"></i>文章管理</a></li>
+		</ul>	
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][WENZHANG][WENZHANG_TRASH] neq 78">style="display:none;"</if>>
+		<li><a href="{:U('Wenzhang/wenzhang_trash')}" <if condition="$myaction eq 'wenzhang_trash'">style="color:#fff;" </if>><i class="fa  fa-file"></i>文章回收站</a></li>
+		</ul>		
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Sys'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][SYS]">style="display:none;"</if>>
+		<!--<a href="#"><i class="fa  fa-cogs  text-primary fa-lg" ></i> <span>系统管理</span></a>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][SYS][CONFIG] neq 93">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/config')}" <if condition="$myaction eq 'config'">style="color:#fff;" </if>><i class="fa fa-cogs "></i>业务参数设置</a></li>-->
+		<!--</ul>-->
+
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][SYS][BANKS] neq 95">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/banks')}" <if condition="$myaction eq 'banks'">style="color:#fff;" </if>><i class="fa fa-bank"></i>银行管理</a></li>-->
+		<!--</ul>	-->
+		<!---->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/adminlogs')}" <if condition="$myaction eq 'adminlogs'">style="color:#fff;" </if>><i class="fa fa-bank"></i>操作日志</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/fgslogs')}" <if condition="$myaction eq 'fgslogs'">style="color:#fff;" </if>><i class="fa fa-bank"></i>分公司操作日志</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/quickqueue')}" <if condition="$myaction eq 'quickqueue'">style="color:#fff;" </if>><i class="fa fa-bank"></i>调整队列</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/quickqueue2')}" <if condition="$myaction eq 'quickqueue2'">style="color:#fff;" </if>><i class="fa fa-bank"></i>调整队列二</a></li>-->
+		<!--</ul>-->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Sys/editqueuelogs')}" <if condition="$myaction eq 'editqueuelogs'">style="color:#fff;" </if>><i class="fa fa-bank"></i>调整日志</a></li>-->
+		<!--</ul>-->
+		<!---->
+		
+		</li>
+		
+		<li <if condition="$mycontroller eq 'Rbac'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][RBAC]">style="display:none;"</if>>
+		<a href="#"><i class="fa fa-circle-o text-aqua" ></i> <span>权限管理</span></a>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][RBAC][INDEX] neq 99">style="display:none;"</if>>
+		<li><a href="{:U('Rbac/index')}" <if condition="$myaction eq 'index'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>管理员列表</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][RBAC][ROLE] neq 100">style="display:none;"</if>>
+		<li><a href="{:U('Rbac/role')}" <if condition="$myaction eq 'role'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>角色列表</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][RBAC][NODE] neq 101">style="display:none;"</if>>
+		<li><a href="{:U('Rbac/node')}" <if condition="$myaction eq 'node'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>节点列表</a></li>
+		</ul>		
+				
+		</li>
+        
+        <li <if condition="$mycontroller eq 'Koubei'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI]">style="display:none;"</if>>
+		<a href="#"><i class="fa fa-circle-o text-aqua" ></i> <span>线路管理</span></a>
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][INDEX] neq 112">style="display:none;"</if>>
+		<li><a href="{:U('Koubei/index')}" <if condition="$myaction eq 'index'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>线路line</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][SHOPAPPLY] neq 119">style="display:none;"</if>>
+		<li><a href="{:U('Koubei/stop')}" <if condition="$myaction eq 'shopapply'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>站点stop</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][ALBUM] neq 121">style="display:none;"</if>>
+		<li><a href="{:U('Koubei/album')}" <if condition="$myaction eq 'album'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>商家相册</a></li>
+		</ul>	
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][COMMENT] neq 123">style="display:none;"</if>>
+		<li><a href="{:U('Koubei/comment')}" <if condition="$myaction eq 'comment'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>评论管理</a></li>
+		</ul>	
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][SHOPCAT] neq 126">style="display:none;"</if>>
+		<li><a href="{:U('Koubei/shopcat')}" <if condition="$myaction eq 'shopcat'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>分类管理</a></li>
+		</ul>
+		
+        <ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][COUPON] neq 132">style="display:none;"</if>>
+		
+		<li><a href="{:U('Koubei/coupon')}" <if condition="$myaction eq 'coupon'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>券的管理</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][KOUBEI][BAOCUO] neq 133">style="display:none;"</if>>
+		
+		<li><a href="{:U('Koubei/baocuo')}" <if condition="$myaction eq 'baocuo'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>报错管理</a></li>
+		</ul>		
+				
+		</li>
+		
+        <li <if condition="$mycontroller eq 'Ads'">class="treeview active" <else/>class="treeview"</if>
+		 <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&!$_SESSION[_ACCESS_LIST][ADMIN][ADS]">style="display:none;"</if>>
+		<!--<a href="#"><i class="fa fa-circle-o text-aqua" ></i> <span>广告管理</span></a>-->
+		<!---->
+		<!--<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][ADS][HOMEHZSC] neq 137">style="display:none;"</if>>-->
+		<!--<li><a href="{:U('Ads/homehzsc')}" <if condition="$myaction eq 'homehzsc'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>首页合作商城</a></li>-->
+		<!--</ul>		-->
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][ADS][HOMEMID] neq 138">style="display:none;"</if>>
+		<li><a href="{:U('Ads/homemid')}" <if condition="$myaction eq 'homemid'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>首页中部八格广告</a></li>
+		</ul>		
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][ADS][HOMETJ] neq 139">style="display:none;"</if>>
+		<li><a href="{:U('Ads/hometj')}" <if condition="$myaction eq 'hometj'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>首页推荐商品</a></li>
+		</ul>	
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][ADS][KBSLIDER] neq 143">style="display:none;"</if>>
+		<li><a href="{:U('Ads/kbslider')}" <if condition="$myaction eq 'kbslider'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>口碑滚动</a></li>
+		</ul>	
+		<ul class="treeview-menu" <if condition="!$_SESSION[C('ADMIN_AUTH_KEY')]&&$_SESSION[_ACCESS_LIST][ADMIN][ADS][KBMID] neq 144">style="display:none;"</if>>
+		<li><a href="{:U('Ads/kbmid')}" <if condition="$myaction eq 'kbmid'">style="color:#fff;" </if>><i class="fa fa-circle-o text-aqua"></i>口碑中部四格</a></li>
+		</ul>		
+				
+		</li>
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>

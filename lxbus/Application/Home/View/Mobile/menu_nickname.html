@@ -1,0 +1,51 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:0px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<div class="mlist" style="margin-bottom:10px;">
+		<p style="font-size:1.3em;"><span class="sp1">用户昵称：</span><span class="sp2"><input type="text" name="nickname" id="nickname" value="{$user[nickname]}" style="border:0px;border-bottom:1px solid #ccc;"></span></p>
+		<p>
+		<div class="col-sm-offset-4 col-sm-4">
+		  <input type="button" id="addnickname" class="btn btn-primary btn-block" style="width:30%;margin-left:30%;" value="提交修改"/>
+		</div>
+		</p>
+		
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+		//修改昵称
+		$('#addnickname').click(function(){
+		$.get("{:U('Home/Mobile/addnickname')}?nickname="+$("#nickname").val()+"&user_id={$user_id}&token={$token}", function(data,status){
+			console.log(data);
+			if(data>=0){
+				alert('修改昵称成功');
+				location.href ="{:U('Home/Mobile/menu')}?domenu=nickname&user_id={$user_id}&token={$token}";
+			}
+			else{
+				alert('修改昵称失败');
+				location.href ="{:U('Home/Mobile/menu')}?domenu=nickname&user_id={$user_id}&token={$token}";
+			}
+			
+		});
+		});
+	
+	});
+</script>
+
+</html>

@@ -1,0 +1,201 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:5px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	
+	<ul id="myTab" class="nav nav-tabs" style="background:#fff;">
+	   <li  class="active">
+		  <a href="#all" data-toggle="tab">
+			 全部({$allmsgnum})
+		  </a>
+	   </li>
+	   <li><a href="#no" data-toggle="tab">未读<if condition="$nomsgnum gt 0"><span style="color:#cc0000;">({$nomsgnum})</span></if></a></li>
+	   <li><a href="#yes" data-toggle="tab">已读</a></li>
+	   <li style="padding-top: 8px;">
+           <button class="fa fa-refresh btn btn-default bin-small" style="border: none;color: #00aaf0;font-size: 18px;" onclick="window.location.reload();"></button>
+       </li>
+	   
+	</ul>
+	<div id="myTabContent" class="tab-content">
+		<div class="tab-pane fade in active" id="all" style="padding-top:0px;">
+			<!--所有消息-->
+			<div style="width:100%;height:3em;padding-top:1em;padding-bottom:1em;border-bottom:1px solid #ccc;background:#fff;">
+				<span style="margin-left:15px;line-height:18px;font-size:18px;color:#cc0000;"><span style="color:#333;font-size:18px;">消息总数：</span>{$allmsgnum}&nbsp;条</span>
+			</div>
+			<div style="width:100%;">
+				<if condition="$allmsgnum eq 0">
+					<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert" style="margin-top:15px;">
+					还没有收到任何消息.
+					</div>
+				<else/>
+				
+					
+				<volist name="allmsglist" id="v">
+				<div class="mlist" onclick="window.location.href='{:U('Home/Mobile/msgview',array('id'=>$v[id],'user_id'=>$user_id,'token'=>$token))}';">
+				<p><span class="sp1">消息类型：</span><span class="sp2">{$v.msg_type|getMessageStatusDes=###}</span></p>
+				<p><span class="sp1">消息内容：</span><span class="sp2">{$v.message|msubstr=###,0,8}</span></p>
+				<p><span class="sp1">发送时间：</span><span class="sp2">{$v.create_time|date="Y-m-d H:i:s",###}</span></p>
+				<p><span class="sp1">状态：</span><span class="sp2"><if condition="$v[is_read] eq 0"><span style="color:red">未读</span></if><if condition="$v[is_read] eq 1"><span style="color:#00aaf0;">已读</span></if></span></p>
+				</div>
+				</volist>
+				<div id="cslist">
+				</div>
+				<input type="hidden" id="csp" name="csp" value="10">
+				<div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
+				  <input type="button" id="btn-morecs" class="btn btn-primary btn-block" style="background-color: #00aaf0;" value="查看更多"/>
+				</div>
+				</if>
+			</div>
+		</div>
+		<div class="tab-pane fade" id="no" style="padding-top:0px;">
+			<!--未读消息-->
+			<div style="width:100%;height:3em;padding-top:1em;padding-bottom:1em;border-bottom:1px solid #ccc;background:#fff;">
+				<span style="margin-left:15px;line-height:18px;font-size:18px;color:#cc0000;"><span style="color:#333;font-size:18px;">未读消息：</span>{$nomsgnum}&nbsp;条</span>
+				<if condition="$nomsgnum neq 0"><input type="button" value="一键阅读" style="float: right;font-size: 16px;margin: -8px 15px 0 0;" onclick="one_read();"/></if>
+			</div>
+			<div style="width:100%;">
+				<if condition="$nomsgnum eq 0">
+					<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert" style="margin-top:15px;">
+					还没有未读消息.
+					</div>
+				<else/>
+				
+					
+				<volist name="nomsglist" id="v">
+				<div class="mlist" onclick="window.location.href='{:U('Home/Mobile/msgview',array('id'=>$v[id],'user_id'=>$user_id,'token'=>$token))}';">
+				<p><span class="sp1">消息类型：</span><span class="sp2">{$v.msg_type|getMessageStatusDes=###}</span></p>
+				<p><span class="sp1">消息内容：</span><span class="sp2">{$v.message|msubstr=0,8}</span></p>
+				<p><span class="sp1">发送时间：</span><span class="sp2">{$v.create_time|date="Y-m-d H:i:s",###}</span></p>
+				<p><span class="sp1">状态：</span><span class="sp2"><if condition="$v[is_read] eq 0"><span style="color:red">未读</span></if><if condition="$v[is_read] eq 1"><span style="color:#00aaf0;">已读</span></if></span></p>
+				</div>
+				</volist>
+				<div id="mnlist">
+				</div>
+				<input type="hidden" id="mnp" name="mnp" value="10">
+				<div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
+				  <input type="button" id="btn-moremn" class="btn btn-primary btn-block" style="background-color: #00aaf0;" value="查看更多"/>
+				</div>
+				</if>
+			</div>
+			
+	   </div>
+	   <div class="tab-pane fade" id="yes" style="padding-top:0px;">
+			<!--已读消息-->
+			<div style="width:100%;height:3em;padding-top:1em;padding-bottom:1em;border-bottom:1px solid #ccc;background:#fff;">
+				<span style="margin-left:15px;line-height:18px;font-size:18px;color:#cc0000;"><span style="color:#333;font-size:18px;">已读消息：</span>{$yesmsgnum}&nbsp;条</span>
+			</div>
+			<div style="width:100%;">
+				<if condition="$yesmsgnum eq 0">
+					<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert" style="margin-top:15px;">
+					还没有已读消息.
+					</div>
+				<else/>
+				
+					
+				<volist name="yesmsglist" id="v">
+				<div class="mlist" onclick="window.location.href='{:U('Home/Mobile/msgview',array('id'=>$v[id],'user_id'=>$user_id,'token'=>$token))}';">
+				<p><span class="sp1">消息类型：</span><span class="sp2">{$v.msg_type|getMessageStatusDes=###}</span></p>
+				<p><span class="sp1">消息内容：</span><span class="sp2">{$v.message|msubstr=0,8}</span></p>
+				<p><span class="sp1">发送时间：</span><span class="sp2">{$v.create_time|date="Y-m-d H:i:s",###}</span></p>
+				<p><span class="sp1">状态：</span><span class="sp2"><if condition="$v[is_read] eq 0"><span style="color:red">未读</span></if><if condition="$v[is_read] eq 1"><span style="color:#00aaf0;">已读</span></if></span></p>
+				</div>
+				</volist>
+				<div id="cplist">
+				</div>
+				<input type="hidden" id="cpp" name="csp" value="10">
+				<div class="col-sm-offset-4 col-sm-4" style="margin-top:8px;">
+				  <input type="button" id="btn-morecp" class="btn btn-primary btn-block" style="background-color: #00aaf0;" value="查看更多"/>
+				</div>
+				</if>
+			</div>
+			
+	   </div>
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+	//一键阅读
+	function one_read(){
+		$.get("{:U('Home/AjaxApp/one_read')}?user_id={$user_id}&token={$token}&cs_id={$cs_id}&cp_id={$cp_id}&mn_id={$mn_id}&csp="+$('#csp').val(), function(data){
+				if(data==1){
+					alert("阅读完成");
+					window.history.go(0);
+				}else if(data==-1){
+					alert("用户不存在");
+				}else{
+					alert("阅读失败");
+				}
+				
+			});	
+	}
+	
+	$(document).ready(function(e) {
+		$('#btn-morecs').on('click', function(){
+			
+			$.get("{:U('Home/AjaxApp/more_msg')}?user_id={$user_id}&token={$token}&cs_id={$cs_id}&cp_id={$cp_id}&mn_id={$mn_id}&csp="+$('#csp').val(), function(data){
+				var json=jQuery.parseJSON(data);
+				//alert(json.status);
+				if(json.status>=0){
+					$('#cslist').append(json.cstjlist);
+					$('#csp').val(json.csp);
+					
+				}else{
+					alert("已经没有更多了");
+				}
+				
+			});
+		});
+		
+		$('#btn-morecp').on('click', function(){
+			
+			$.get("{:U('Home/AjaxApp/more_msg')}?user_id={$user_id}&token={$token}&cs_id={$cs_id}&cp_id={$cp_id}&mn_id={$mn_id}&cpp="+$('#cpp').val(), function(data){
+				var json=jQuery.parseJSON(data);
+				//alert(json.status);
+				if(json.status>=0){
+					$('#cplist').append(json.cptjlist);
+					$('#cpp').val(json.cpp);
+					
+				}else if(json.status==-2){
+					alert("已经没有更多了");
+				}else{
+					alert("非法操作");
+				}
+				
+			});
+		});
+		
+		$('#btn-moremn').on('click', function(){
+			
+			$.get("{:U('Home/AjaxApp/more_msg')}?user_id={$user_id}&token={$token}&cs_id={$cs_id}&cp_id={$cp_id}&mn_id={$mn_id}&mnp="+$('#mnp').val(), function(data){
+				var json=jQuery.parseJSON(data);
+				//alert(json.status);
+				if(json.status>=0){
+					$('#mnlist').append(json.mntjlist);
+					$('#mnp').val(json.mnp);
+					
+				}else if(json.status==-2){
+					alert("已经没有更多了");
+				}else{
+					alert("非法操作");
+				}
+				
+			});
+		});
+	
+	});
+</script>
+
+</html>

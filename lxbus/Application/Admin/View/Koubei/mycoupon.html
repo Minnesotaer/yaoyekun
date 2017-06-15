@@ -1,0 +1,112 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>登录用户管理<span style="margin-left:10px;color:#cc0000;">({$usernum}条记录)</span></caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="请输入券的编号/名称"><input type="button" name="serach" id="search" value="搜索">
+   </caption>
+   <thead>
+      <tr>
+        <th>编号</th>
+        <th>企业名称</th>
+        <th>店铺名称</th>
+		<th>优惠券编号</th>
+        <th>优惠券类型</th>
+		<th>优惠值</th>
+        <th>开始时间</th>
+		<th>结束时间</th>
+        <th>状态</th>
+		<th>消费确认时间</th>
+		<th>备注</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="couponlist" item="v">
+      <tr id="user-{$v.id}">
+			<td>{$v.id}</td>
+			<td>{$v.company_id|getkbcompanyname=###}</td>
+			<td>{$v.shop_id|getkbshopname=###}</td>
+			<td>{$v.coupon_number}</td> 
+			<td>
+				 <if condition="$v[coupon_type] eq '1'">
+							<span style="color:black">折扣券</span>
+					<elseif condition="$v[coupon_type] eq '2'" />
+						   <span style="color:black">现金券</span>
+				</if>
+			</td>
+			<td>{$v.coupon_value}</td>
+			<td><if condition="$v[forom_time] gt 0">{$v.forom_time|date="Y-m-d H:m",###}<else/>--</if></td>
+			<td><if condition="$v[to_time] gt 0">{$v.to_time|date="Y-m-d H:m",###}<else/>--</if></td>
+			<td>
+				  <if condition="$v[status] eq '0'">
+						<span style="color:black">未发放</span>
+				  <elseif condition="$v[status] eq '1'" />
+					   <span style="color:black">已发放</span>
+				
+				  <elseif condition="$v[status] eq '2'" />  
+					   <span style="color:black">已领</span>
+				 
+				  <elseif condition="$v[status] eq '3'" />  
+					   <span style="color:black">已消费</span>
+				 
+				  <elseif condition="$v[status] eq '4'" />  
+					   <span style="color:black">已过期</span>
+				 </if>
+			</td>
+			<td><if condition="$v[check_time] gt 0">{$v.check_time|date="Y-m-d H:m",###}<else/>--</if></td>
+			<td>{$v.remark}</td>
+	  </foreach>
+	  <tr>
+		<td colspan="15" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+
+
+
+
+<script>
+$(document).ready(function(e) {
+	
+	
+	//搜索
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('mycoupon')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	
+
+
+});
+
+
+
+</script>
+<include file="Public/footer" />

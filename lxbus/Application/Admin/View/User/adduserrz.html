@@ -1,0 +1,272 @@
+<include file="Public/header" title="后台主页" />
+    
+<style type="text/css">
+body{margin: 0px; }
+p{margin:0px;}
+.title{color:#FFFF00; background:#000000; text-align:center; font-size:24px; line-height:50px; font-weight:bold;}
+.file{width:10%;left:30%; margin-top:6px;border:0px; height:10px; position:absolute;font-size:14px;}
+.filebtn{width:55%;margin:auto auto;margin-top:12px;display:block; position:relative; color:#f16265;font-family:"microsoft yahei"; background:rgb(255,210,0); font-size:1.06em;text-align:center; cursor:pointer; border:0px; border-radius:5px;padding:8px 0;}
+.showimg{margin:10px auto 10px auto; text-align:center;width:90%;}
+</style> 
+<script>
+window.onload = function(){
+
+    // 选择正面图片
+    document.getElementById('img').onchange = function(event){
+        var img = event.target.files[0];
+
+        // 判断是否图片
+        if(!img){
+            return ;
+        }
+
+        // 判断图片格式
+        if(!(img.type.indexOf('image')==0 && img.type && /\.(?:jpg|png|gif)$/.test(img.name)) ){
+            alert('图片只能是jpg,gif,png');
+            return ;
+        }
+
+        var reader = new FileReader();
+        reader.readAsDataURL(img);
+		
+        reader.onload = function(e){ // reader onload start
+            // ajax 上传图片
+			var get_url = "{:U('Admin/User/picAdd')}";
+			var user_id=$('#user_id').val();
+            $.post(get_url, { img: e.target.result,type:1,user_id:user_id},function(ret){	
+               if(ret.img!=''){
+                  alert(ret.msg);
+                    $('#showimg').html('<img src="/' + ret.img + '" width="200">');
+					$("input[name='idcard_face']").val(ret.img);
+					$('#showimg_1').html('');
+                }else if(ret.msg!=""){
+					alert(ret.msg);
+				}else{
+                    alert('图片上传失败！');
+                }
+            },'json');
+        } // reader onload end
+    }
+	
+	// 选择反面图片
+    document.getElementById('img2').onchange = function(event){
+        var img = event.target.files[0];
+
+        // 判断是否图片
+        if(!img){
+            return ;
+        }
+
+        // 判断图片格式
+        if(!(img.type.indexOf('image')==0 && img.type && /\.(?:jpg|png|gif)$/.test(img.name)) ){
+            alert('图片只能是jpg,gif,png');
+            return ;
+        }
+
+        var reader = new FileReader();
+        reader.readAsDataURL(img);
+		
+        reader.onload = function(e){ // reader onload start
+            // ajax 上传图片
+			var get_url = "{:U('Admin/User/picAdd')}";
+			var user_id=$('#user_id').val();
+            $.post(get_url, { img: e.target.result,type:2,user_id:user_id},function(ret){	
+               if(ret.img!=''){
+                  alert(ret.msg);
+                    $('#showimg2').html('<img src="/' + ret.img + '" width="200">');
+					$("input[name='idcard_back']").val(ret.img);
+					$('#showimg_2').html('');
+                }else if(ret.msg!=""){
+					alert(ret.msg);
+				}else{
+                    alert('图片上传失败！');
+                }
+            },'json');
+        } // reader onload end
+    }
+
+  }
+</script>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<caption>添加或编辑个人认证</caption><br><br>
+	<div id="page-wrapper">
+	<form id="addrz-form" class="form-horizontal" role="form">
+		<if condition="$user[user_id] eq ''">
+		<div class="alert alert-info col-md-8 col-md-offset-2">
+			用户不存在
+		</div>
+		</if>
+		<if condition="$user[is_check_idcard] eq 2">
+		<div class="alert alert-info col-md-8 col-md-offset-2">
+			审核结果：{$user[check_remark]}
+		</div>
+		</if>
+		<div class="form-group field-user-realname has-success">
+			<label class="control-label col-sm-3" for="user-realname">真实姓名 <span class="requery">*</span></label>
+			<div class="col-sm-5">
+				<input type="hidden" id="user_id" class="form-control" name="user_id" value="{$user[user_id]}" >
+				
+				<input type="text" id="realname" class="form-control" name="realname" value="{$user[realname]}" >
+			</div>
+		</div>                        
+		<div class="form-group field-user-sex has-success">
+			<label class="control-label col-sm-3" for="user-sex">性别 <span class="requery">*</span></label>
+			<div class="col-sm-5">
+				<div id="user-sex"><label class="radio-inline"><input type="radio" name="sex" value="1" <if condition="$user[sex] eq 1">checked</if>> 男</label>
+				<label class="radio-inline"><input type="radio" name="sex" value="2" <if condition="$user[sex] eq 2">checked</if>> 女</label></div>
+			</div>
+
+		</div>                        
+		<div class="form-group field-user-idcard_id has-success">
+			<label class="control-label col-sm-3" for="user-idcard_id">身份证号码 <span class="requery">*</span></label>
+			<div class="col-sm-5">
+			<input type="text" id="idcard_id" class="form-control" name="idcard_id" value="{$user[idcard_id]}">
+			</div>
+		</div>                        
+
+		<div class="form-group">
+	<label class="control-label col-sm-3" for="user-idcard_id">上传身份证 <span class="requery">*</span></label>
+	<div class="col-sm-5">
+		<!--身份证正面-->
+		<input type="hidden" id="idcard_face" name="idcard_face" value="">
+					
+		<p class="showimg" id="showimg"></p>
+		<if condition="$user[idcard_face] eq ''">
+		<p class="showimg" id="showimg_1">
+			<img src="__ROOT__/Public/images/idcard_face.jpg" height="100" border="0" style=""/>
+			
+		</p>
+		</if>
+		<if condition="$user[idcard_face] neq ''">
+		<p class="showimg">
+			<span id="myface"><img id="idcard_face" src="__ROOT__/{$user[idcard_face]}" width="130" height="100" border="0" /></span>
+			<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+			<input type="button" id="delface" name="delface" value="删除"/>
+			</if>
+		</p>
+		</if>
+		
+		<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+		<p><input type="file" class="file" id="img">
+		<label class="filebtn" for="img" title="JPG,GIF,PNG"><img width="25px" src="__ROOT__/Public/images/camera.png"/>&nbsp;&nbsp;请选择正面图片</label></p>
+		</if>
+		
+		<!--身份证反面-->
+		<input type="hidden" id="idcard_back" name="idcard_back" value="">
+			
+		<p class="showimg" id="showimg2"></p>
+		<if condition="$user[idcard_back] eq ''">
+		<p class="showimg" id="showimg_2">
+			<img src="__ROOT__/Public/images/idcard_back.jpg" height="100" border="0"/>
+		</p>
+		</if>
+		<if condition="$user[idcard_back] neq ''">
+		<p class="showimg">
+			<span id="myback"><img id="idcard_back" src="__ROOT__/{$user[idcard_back]}" width="130" height="100" border="0" /></span>
+			<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+			<input type="button" id="delback" name="delback" value="删除"/>
+			</if>
+		</p>
+		</if>
+		
+		<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2">
+		<p><input type="file" class="file" id="img2">
+		<label class="filebtn" for="img2" title="JPG,GIF,PNG"><img width="25px" src="__ROOT__/Public/images/camera.png"/>&nbsp;&nbsp;请选择反面图片</label></p>
+		</if>
+		
+	</div>
+	
+	 
+</div>
+			 
+	  <div class="form-group" align="center">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<if condition="$user[is_check_idcard] eq 0 or $user[is_check_idcard] eq 2"><button type="button" id="addrz" class="btn btn-primary">确定提交</button></if>                         
+			</div>
+	  </div>
+	</form> 
+	</div>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+
+//执行实名认证
+		$('#addrz').click(function(){
+		$.get("{:U('Admin/User/doadduserrz')}?"+$('form').serialize(), function(data,status){
+			console.log(data);
+			if(data>=0){
+			alert('提交认证成功');
+			//location.href ="{:U('Home/User/info')}";
+			}
+			else if(data==-2){
+				alert("同一个身份证认证次数已达到{:C('idcard_num')}次，不能再提交");
+				//location.href ="{:U('Home/User/info')}";
+			}
+			else{
+				alert('提交认证失败');
+			}
+			
+		});
+		});
+		
+	//删除正面
+		$('#delface').click(function(){
+			var user_id=$('#user_id').val();
+			$.get("{:U('Admin/User/picdel')}?type=1&user_id="+user_id+"&pic="+$('#myface img').attr("src"), function(data,status){
+				console.log(data);
+				if(data>=0){
+				alert('删除正面成功');
+				$('#myface').html('');
+				window.location.reload();
+				}
+				else if(data=-2){
+				alert('用户非法操作。');
+				window.location.reload();
+				}else{
+				alert('删除失败');
+				window.location.reload();
+				}
+				
+			});
+		});
+		
+		//删除反面
+		$('#delback').click(function(){
+			var user_id=$('#user_id').val();
+			$.get("{:U('Admin/User/picdel')}?type=2&user_id="+user_id+"&pic="+$('#myface img').attr("src"), function(data,status){
+				console.log(data);
+				if(data>=0){
+				alert('删除正面成功');
+				$('#myback').html('');
+				window.location.reload();
+				}
+				else if(data=-2){
+				alert('用户非法操作。');
+				window.location.reload();
+				}else{
+				alert('删除失败');
+				window.location.reload();
+				}
+				
+			});
+		});
+</script>
+<include file="Public/footer" />

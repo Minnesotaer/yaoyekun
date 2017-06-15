@@ -1,0 +1,61 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+   <caption style="font-size:22px;">角色列表</caption>
+   <caption style="font-size:22px;border-bottom:1px solid #ccc;">
+   <a class="btn btn-default" href="{:U('Admin/Rbac/addRole')}" >添加角色</a>
+   </caption>
+   <thead>
+      <tr>
+         <th>ID</th>
+		  <th>名称</th>
+		  <th>注释</th>
+		  <th>状态</th>
+		  <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="role" item="v">
+                <tr>
+                  <td>{$v.id}</td>
+                  <td>{$v.name}</td>
+                  <td>{$v.remark}</td>
+				  <td><if condition="$v['status']"><span class="label label-primary">正常<else/><span class="label label-danger">关闭</span></if></td>
+                  <td>
+					<div class="btn-group">
+					  <a href="{:U('Rbac/access', array('rid' => $v['id']))}" class="btn btn-default btn-xs">配置</a> <a href="{:U('Admin/Rbac/del_role',array('id'=>$v['id']))}" class="btn btn-danger btn-xs">删除</a>
+					</div>
+				  </td>
+                </tr>
+               </foreach>
+	<tr>
+		<td colspan="11" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+<include file="Public/footer" />

@@ -1,0 +1,231 @@
+<include file="Public/header" title="后台主页" />
+   <style>
+	.container img {max-width:600px;}
+	p{margin:0px;padding:10px;}
+
+	.uploding{position:absolute;top:40%;width:50%;left:30%;text-align:center;padding:30px 0; color:#fff;background:#333;border:1px solid #ccc;opacity:0.8;border-radius:15px;}
+	tr{border-bottom:1px solid #ccc;}
+	</style> 
+<script>
+	function uppic(id,abj){
+		
+		var input = document.getElementById("file_input"+id);
+		var result;
+
+		if(typeof FileReader==='undefined'){
+			result.innerHTML = "抱歉，你的浏览器不支持 FileReader";
+			input.setAttribute('disabled','disabled');
+		}
+		
+		//提示正在上传
+		$('#uploding').show();
+		
+		for(var i=0;i<abj.files.length;i++){
+			if (!input['value'].match(/.jpg|.gif|.png|.bmp/i)){　　//判断上传文件格式
+				return alert("上传的图片格式不正确，请重新选择");　　　　　　　　　　
+				}
+			var reader = new FileReader();
+			reader.readAsDataURL(abj.files[i]);
+			reader.onload = function(e){
+				// ajax 上传图片
+				var get_url = "{:U('saveuppic2')}";
+				
+				//alert(e.target.result);
+				$.post(get_url, { img: e.target.result,id:id},function(ret){	
+				   if(ret.img!=''){
+						$('#uploding').hide();
+						alert(ret.msg);
+						result = '<div id="result"><img src="'+ret.img+'" alt=""/></div>';
+						
+						$('#mypic'+id).html(result);
+						//document.getElementById('mypic'+id).innerHTML(result);  　　//插入dom树 
+					}else if(ret.msg!=""){
+						$('#uploding').hide();
+						alert(ret.msg);
+					}else{
+						$('#uploding').hide();
+						alert('图片上传失败！');
+					}
+				},'json');
+	
+				  
+			}			　　　　　　　　 
+		}   
+			
+			
+		
+	}
+	
+	function saveads(id){
+		var adslink=$('#adslink'+id).val();
+		var isactive=$('#isactive'+id).val();
+		
+		if(adslink==''){
+			alert("商品链接不能为空.");return false;
+		}
+		if(isactive==''){
+			alert("请选择是否激活.");return false;
+		}
+		$.post("{:U('Admin/Ads/dohomehzsc2')}",{ id: id,adslink:adslink,isactive:isactive}, function(data){
+			console.log(data);
+			if(data>=0){
+				alert('保存成功'); return false;
+			//location.href ="{:U('add')}";
+			}
+			
+			else{
+				alert('保存失败');return false;
+			}
+			
+		});
+	}
+</script>
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<div id="page-wrapper">
+	<form id="add-form">
+		<table>
+			<tr>
+				<td>专题位</td>
+				<td style="padding:10px;">
+					<img src="__ROOT__/Uploads/ads_base/kbslider.png">
+				</td>
+			</tr>
+			
+
+			<tr>
+				<td>P1<input type="hidden" name="id{$ads1[id]}" id="id{$ads1[id]}" value="{$ads1[id]}"></td>
+				<td style="padding:10px;">
+					
+				
+				<p id="mypic{$ads1[id]}"><img src="{:C('siteurl')}{$ads1[pic_url]}" onchange="uppic({$ads1[id]})"></p>
+				<p style="width:500px;">
+					<input class="file" type="file" id="file_input{$ads1[id]}" multiple onchange="uppic({$ads1[id]},this);"/>
+										
+				</p>
+				
+				<p>大小：640px*360px</p>
+				<p>链接：<input type="text" name="adslink{$ads1[id]}" id="adslink{$ads1[id]}" value="{$ads1[site_url]}" style="width:60%;"> </p>
+				<p>是否激活：
+					<select id="isactive{$ads1[id]}" name="isactive{$ads1[id]}">
+						<option value="" >请选择</option>
+						<option value="0" <if condition="$ads1[is_active] eq 0">selected</if>>不激活</option>
+						<option value="1" <if condition="$ads1[is_active] eq 1">selected</if>>激活</option>
+					</select> 
+				</p>
+				<p><input type="button" class="btn btn-primary" name="ok{$ads1[id]}" id="ok{$ads1[id]}" value="修改" onclick="saveads({$ads1[id]})"> </p>
+
+					
+				</td>
+			</tr>
+			<tr>
+				<td>P2<input type="hidden" name="id{$ads2[id]}" id="id{$ads2[id]}" value="{$ads2[id]}"></td>
+				<td style="padding:10px;">
+					
+				
+				<p id="mypic{$ads2[id]}"><img src="{:C('siteurl')}{$ads2[pic_url]}" onchange="uppic({$ads2[id]})"></p>
+				<p style="width:500px;">
+					<input class="file" type="file" id="file_input{$ads2[id]}" multiple onchange="uppic({$ads2[id]},this);"/>
+										
+				</p>
+				
+				<p>大小：640px*360px</p>
+				<p>链接：<input type="text" name="adslink{$ads2[id]}" id="adslink{$ads2[id]}" value="{$ads2[site_url]}" style="width:60%;"> </p>
+				<p>是否激活：
+					<select id="isactive{$ads2[id]}" name="isactive{$ads2[id]}">
+						<option value="" >请选择</option>
+						<option value="0" <if condition="$ads2[is_active] eq 0">selected</if>>不激活</option>
+						<option value="1" <if condition="$ads2[is_active] eq 1">selected</if>>激活</option>
+					</select> 
+				</p>
+				<p><input type="button" class="btn btn-primary" name="ok{$ads2[id]}" id="ok{$ads2[id]}" value="修改" onclick="saveads({$ads2[id]})"> </p>
+
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td>P3<input type="hidden" name="id{$ads3[id]}" id="id{$ads3[id]}" value="{$ads3[id]}"></td>
+				<td style="padding:10px;">
+					
+				
+				<p id="mypic{$ads3[id]}"><img src="{:C('siteurl')}{$ads3[pic_url]}" onchange="uppic({$ads3[id]})"></p>
+				<p style="width:500px;">
+					<input class="file" type="file" id="file_input{$ads3[id]}" multiple onchange="uppic({$ads3[id]},this);"/>
+										
+				</p>
+				
+				<p>大小：640px*360px</p>
+				<p>链接：<input type="text" name="adslink{$ads3[id]}" id="adslink{$ads3[id]}" value="{$ads3[site_url]}" style="width:60%;"> </p>
+				<p>是否激活：
+					<select id="isactive{$ads3[id]}" name="isactive{$ads3[id]}">
+						<option value="" >请选择</option>
+						<option value="0" <if condition="$ads3[is_active] eq 0">selected</if>>不激活</option>
+						<option value="1" <if condition="$ads3[is_active] eq 1">selected</if>>激活</option>
+					</select> 
+				</p>
+				<p><input type="button" class="btn btn-primary" name="ok{$ads3[id]}" id="ok{$ads3[id]}" value="修改" onclick="saveads({$ads3[id]})"> </p>
+
+					
+				</td>
+			</tr>
+			
+			<tr>
+				<td>P4<input type="hidden" name="id{$ads4[id]}" id="id{$ads3[id]}" value="{$ads4[id]}"></td>
+				<td style="padding:10px;">
+					
+				
+				<p id="mypic{$ads4[id]}"><img src="{:C('siteurl')}{$ads4[pic_url]}" onchange="uppic({$ads4[id]})"></p>
+				<p style="width:500px;">
+					<input class="file" type="file" id="file_input{$ads4[id]}" multiple onchange="uppic({$ads4[id]},this);"/>
+										
+				</p>
+				
+				<p>大小：640px*360px</p>
+				<p>链接：<input type="text" name="adslink{$ads4[id]}" id="adslink{$ads4[id]}" value="{$ads4[site_url]}" style="width:60%;"> </p>
+				<p>是否激活：
+					<select id="isactive{$ads4[id]}" name="isactive{$ads4[id]}">
+						<option value="" >请选择</option>
+						<option value="0" <if condition="$ads4[is_active] eq 0">selected</if>>不激活</option>
+						<option value="1" <if condition="$ads4[is_active] eq 1">selected</if>>激活</option>
+					</select> 
+				</p>
+				<p><input type="button" class="btn btn-primary" name="ok{$ads4[id]}" id="ok{$ads4[id]}" value="修改" onclick="saveads({$ads4[id]})"> </p>
+
+					
+				</td>
+			</tr>
+
+			
+		</table>
+		<div id="uploding" class="uploding" style="display:none;">上传中...</div>
+    </form>
+	</div>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+
+//执行企业认证
+$(document).ready(function(e) {
+	
+
+});
+</script>
+<include file="Public/footer" />

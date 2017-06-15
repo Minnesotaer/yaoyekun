@@ -1,0 +1,97 @@
+<include file="Public/header" title="后台主页" />
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+   <caption style="font-size:22px;border-bottom:1px solid #ccc;">管理用户密码修改</caption>
+	<table class="table table-striped">
+   
+   <tbody>
+	  <form class="form-horizontal" action="{:U('Index/doeditad')}" method="post" role="form">
+		  <div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+			<div>
+			  <input type="text" class="form-control" id="inputEmail3" name="username" placeholder="用户名" value="{:session('admin_name')}" readonly/>
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="inputPassword3" class="col-sm-2 control-label">新密码</label>
+			<div>
+			  <input type="password" class="form-control" id="password" name="password" placeholder="新密码" />
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="inputPassword3" class="col-sm-2 control-label">确认新密码</label>
+			<div>
+			  <input type="password" class="form-control" id="repassword" name="repassword" placeholder="确认新密码" />
+			</div>
+		  </div>
+		  
+		  
+		  <div class="form-group" id="last">
+			<div style="clear:both;">
+			  <button type="button" class="btn btn-default" id="user-submit">确定修改</button>
+			</div>
+		  </div>
+		</form>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+<script>
+$(document).ready(function(e) {
+
+	$('#user-submit').click(function(){
+		if($('#password').val()==''){
+			alert("密码不能为空！");
+			return false;
+		}
+		if($('#repassword').val()==''){
+			alert("确认密码不能为空！");
+			return false;
+		}
+		if($('#password').val()!=$('#repassword').val()){
+			alert("两次密码不一致！");
+			return false;
+		}
+		var url="{:U('doeditad')}?"+$('form').serialize();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data==0){
+			alert("修改成功！");
+			location.href ="{:U('editad')}";
+		}
+		else if(data=-1){
+			alert("两次密码不一致！");
+			
+		}
+		else{
+			alert("修改失败！");
+			
+		}
+		});
+	});
+	
+	
+
+});
+</script>
+
+<include file="Public/footer" />

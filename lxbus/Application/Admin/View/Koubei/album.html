@@ -1,0 +1,105 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>商家相册</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="店铺名称或企业名称"><input type="button" name="serach" id="search" value="搜索">
+
+   
+   <thead>
+      <tr>
+          <th>编号</th>
+         <th>企业名称</th>
+         <th>店铺名称</th>
+		 <th>图片数量</th>
+         <th>操作</th>
+       
+      </tr>
+   </thead>
+   <tbody>
+	  <volist name="imagelist" id="v">
+      <tr>
+         <td>{$v.id}</td>
+         <td>{$v.company_id|getkbcompanyname=###}</td>
+         <td>{$v.name}</td>
+		 <td>{$v.imgnum}
+		 
+		
+		 </td>
+		   <td><if condition="$v[pic_url] neq ''"><img src="__ROOT__/{$v.pic_url}" height="100" width="100"></if></td>
+   <td><a href="{:U('Admin/Koubei/myalbum')}?id={$v.id}">查看</a>
+			</td>
+  
+		 </tr>
+	  </volist>
+	  <tr>
+		<td colspan="12" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+<script>
+$(document).ready(function(e) {
+
+	
+	$('.del-comment').click(function(){
+	//alert("aaa");
+	var id=$(this).attr('data-id');
+	
+	var url = "{:U('delcommemt')}?id="+id;
+	var r=confirm('你确定要删除该条评论吗？');
+	if (r==true){
+		$.get(url,function(data,status){
+			console.log(data);
+			if(data>=0){
+				//$('#myModal').modal('hide');
+				
+				alert("删除成功");
+				window.location.reload();
+			}
+			
+			else{
+				alert("删除失败");
+			}
+		});
+	}
+	
+	});
+	
+	
+	
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('album')}?keyword="+keyword;
+	window.location.href=url;
+	});
+
+
+});
+</script>
+<include file="Public/footer" />

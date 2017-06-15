@@ -1,0 +1,225 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>业务经理升级管理</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或名称"><input type="button" name="serach" id="search" value="搜索">
+   </caption>
+   <thead>
+      <tr>
+         <th>业务编号</th>
+         <th>用户名称</th>
+         <th>手机</th>
+         <th>原业务等级</th>
+         <th>升业务等级</th>
+         <th>提交时间</th>
+         <th>状态</th>
+         <th>审核时间</th>
+         <th>审核说明</th>
+         <th>操作</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <volist name="mnlist" id="v">
+      <tr>
+         <td>{$v.manager_id}</td>
+         <td>{$v.realname}</td>
+         <td>{$v.phone}</td>
+		 <td>{$v.oldlevel|getManagerGrade=###}</td>
+		 <td>{$v.level|getManagerGrade=###}</td>
+         <td><if condition="$v[create_time] gt 0">{$v.create_time|date='Y-m-d H:i',###}<else/>--</if></td>
+		 <td>
+		 <if condition="$v[status] eq 0">未审核</if>
+		 <if condition="$v[status] eq 1">已审核</if>
+		 <if condition="$v[status] eq 2">已拒绝</if>		 
+		 </td>
+         <td>
+		  <if condition="$v[check_time] eq 0||$v[check_time] eq ''">--<else/>{$v.check_time|date='Y-m-d H:i',###}</if>
+		 </td>
+		 <td>
+			{$v.check_remark}
+		 </td>         
+		 <td>
+		 <if condition="$v[status] eq 0">
+		 <button class="btn btn-default edit-userdata" data-toggle="modal"  data-target="#myModal" data-level="{$v.level}" data-id="{$v.id}">审核</button>
+		 </if>
+		 <if condition="$v[status] neq 0">
+		 无
+		 </if>
+		 </td>
+
+		 </tr>
+	  </volist>
+	  <tr>
+		<td colspan="12" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               业务经理升级审核
+            </h4>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+			<div class="form-group">
+			<label class="col-sm-2 control-label">编号</label>
+			<div class="col-sm-10">
+			<p class="form-control-static" id="modal-user-id"></p>
+			<input type="hidden"  name="manager_id" id="manager_id">
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">用户名称</label>
+			<div class="col-sm-10">
+			<p id="realname"></p>
+			</div>
+			</div>
+			
+			<div class="form-group">
+			<label class="col-sm-2 control-label">手机号</label>
+			<div class="col-sm-10">
+			<p id="phone"></p>
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">在业务等级</label>
+			<div class="col-sm-10">
+			<p id="oldlevel"></p>
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">升业务等级</label>
+			<div class="col-sm-10">
+			<input type="hidden" name="newlevel" id="newlevel">
+			<input type="hidden" name="myid" id="myid">
+			<p id="level"></p>
+			</div>
+			</div>
+			
+			
+			<div class="form-group">
+			<label for="inputPassword" class="col-sm-2 control-label">审核/拒绝说明</label>
+			<div class="col-sm-10">
+			<textarea name="check_remark" id="check_remark" style="width:60%;height:60px;text-align:left;padding:3px;"></textarea>
+			</div>
+			</div>
+			
+			</form>
+			
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" id="user-submit2">
+               拒绝审核
+            </button>
+            <button type="button" class="btn btn-primary" id="user-submit">
+               提交审核
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+<script>
+$(document).ready(function(e) {
+	$('.edit-userdata').click(function(){
+		$('#myAlert').remove();
+		console.log($(this).parent().siblings().eq(1).text());
+		$('#modal-user-id').text($(this).parent().siblings().eq(0).text());
+		//$('#modal-user-name').text($(this).parent().siblings().eq(1).text());
+		$('#realname').text($(this).parent().siblings().eq(1).text());
+		$(':input[name="manager_id"]').val($(this).parent().siblings().eq(0).text());
+		$('#phone').text($(this).parent().siblings().eq(2).text());
+		$('#oldlevel').text($(this).parent().siblings().eq(3).text());
+		$('#level').text($(this).parent().siblings().eq(4).text());
+		$('#newlevel').val($(this).attr('data-level'));
+		$('#myid').val($(this).attr('data-id'));
+	});
+	
+	$('#user-submit').click(function(){
+		var manager_id=$('#manager_id').val();
+		var check_remark=$('#check_remark').val();
+		var url="{:U('check_manager')}?is_check=1&id="+$('#myid').val()+"&level="+$('#newlevel').val()+"&manager_id="+$('#manager_id').val()+"&check_remark="+check_remark;
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(status);
+		console.log(data);
+		if(data=='do-success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>审核成功！</strong></div>';
+			$('.modal-header').append(html);
+			location.href ="{:U('mnupgrade')}";
+		}
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+	
+	$('#user-submit2').click(function(){
+		var manager_id=$('#manager_id').val();
+		var check_remark=$('#check_remark').val();
+		var url="{:U('check_manager')}?is_check=2&id="+$('#myid').val()+"&level="+$('#newlevel').val()+"&manager_id="+$('#manager_id').val()+"&check_remark="+check_remark;
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(status);
+		console.log(data);
+		if(data=='do-success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>拒绝成功！</strong></div>';
+			$('.modal-header').append(html);
+			location.href ="{:U('mnupgrade')}";
+		}
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+	
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('mnupgrade')}?keyword="+keyword;
+	window.location.href=url;
+	});
+
+
+});
+</script>
+<include file="Public/footer" />

@@ -1,0 +1,77 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>商家财务异动</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或商家名称"><input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+         <th>商家编号</th>
+         <th>商家名称</th>
+         <th>手机</th>
+         <th>金额</th>
+         <th>备注说明</th>
+		 <th>对应订单ID</th>
+		 <th>时间</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="cpcaiwuyidong" item="v">
+      <tr>
+         <td>{$v.company_id}</td>
+         <td>{$v.company_id|getcpname=###}</td>
+         <td>{$v.company_id|getcpuserphonereal=###}</td>
+         <td><if condition="$v[is_jia] eq 1"><span style="color:green">+{$v.money}</span></if><if condition="$v[is_jia] eq 2"><span style="color:red">-{$v.money}</span></if></td>
+         <td>{$v.type}</td>
+         <td>{$v.t_id}</td>
+         <td>{$v.create_time|date='Y-m-d H:i',###}</td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="7" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('cpcaiwuyidong')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var url = "{:U('cpcaiwuyidongtoexcel')}?keyword="+keyword;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

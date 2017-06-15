@@ -1,0 +1,532 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<style type="text/css">
+#allmap {width:100%; height:470px;overflow: hidden;margin:0;}
+#l-map{height:100%;width:78%;float:left;border-right:2px solid #bcbcbc;}
+#r-result{height:100%;width:20%;float:left;}
+.myclass{ height:50px; width:150px; font-size:12px; line-height:22px;}
+.bigdiv{width:100%; height:50%; margin:0 auto;}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=B3f7707c25da5b29a6ff69618788a296"></script>
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+   <caption>编辑店铺</caption>
+   <form id="add-form">
+	<table class="table table-striped">
+ 
+  
+		 <tr>
+			<td>店铺名称</td>
+			<td>
+			<input type="hidden" id="id" name="id" value="{$shop.id}">
+			<input type="text" id="shopname" name="name" value="{$shop.name}">
+			</td>
+		 </tr>
+		  <tr>
+			<td>企业用户手机号</td>
+			<td>
+		      <input type="text" id="companyphone" name="companyphone" value="{$shop.phone}">
+		  
+			</td>
+		  </tr>
+		   
+		  <tr>  
+		 <td>省市区</td>
+		  <td>
+		              
+            <select name="province_id" id="province_id" onchange="loadRegion('province_id',2,'city_id','{:U('Admin/Ajax/getRegion')}');" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择省</option>
+                <volist name="province" id="v">
+                    <option value="{$v.provinceid}" <if condition="$v[provinceid] eq $shop[province_id]">selected</if>>{$v.province}</option>
+                </volist>
+            </select>
+		   <php>
+			 if($shop[province_id]!=''||$shop[province_id]!=0){
+				$cities=getcities($shop[province_id]);
+			 }
+			</php>
+		    <select name="city_id" id="city_id" onchange="loadRegion('city_id',3,'area_id','{:U('Admin/Ajax/getRegion')}');" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择城市</option>
+				<volist name="cities" id="vc">
+				<option value="{$vc.id}" <if condition="$vc[id] eq $shop[city_id]">selected</if>>{$vc.name}</option>
+				</volist>
+            </select>
+			<php>
+			 if($shop[city_id]!=''||$shop[city_id]!=0){
+				$areas=getareas($shop[city_id]);
+			 }
+			</php>
+			<select name="area_id" id="area_id" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择地区</option>
+				<volist name="areas" id="va">
+				<option value="{$va.id}" <if condition="$va[id] eq $shop[area_id]">selected</if>>{$va.name}</option>
+				</volist>
+             
+            </select>
+		  
+		  </td>
+		  </tr>
+		   <tr >
+		 <td>地址</td>
+		  <td>
+		    <input type="text" style="width:60%;" id="address" name="address" value="{$shop.address}">
+		  </td>
+		 </tr>
+		<tr >		 
+		 <td>标注地图</td>
+		    <td><input type="button" class="btn btn-default " data-toggle="modal"  data-target="#myModal" value="选择坐标">
+			<input type="text" name="longitude" id="longitude" value="{$shop.longitude}" placeholder="经度" readonly>
+			<input type="text" name="latitude" id="latitude" value="{$shop.latitude}" placeholder="纬度" readonly>
+			</td>
+		 </tr>
+    
+		 <tr>
+		 <td>一级分类</td>
+		 <td>
+		    <select name="cat_id" id="cat_id" class="form-control" style="width:30%;" onchange="loadchildcat('cat_id','childcat','{:U('Admin/Ajax/getchildcat')}');" >
+				<option value="0">选择分类</option>
+                <volist name="cat" id="v">
+                    <option value="{$v.id}" <if condition="$pcat eq $v[id]">selected</if>>{$v.name}</option>
+                </volist>
+            </select>
+		 </td>
+		 </tr>
+		 <tr>
+		 <td>子分类</td>
+		 <td id="childcat">
+		    <volist name="childcat" id="v">
+				<label style='float:left;margin-right:10px;'><input type='checkbox' name='childcat[]' <if condition="$v[ischeck] eq 1">checked</if> value="{$v.id}">{$v.name}</label>
+			</volist>
+		 </td>
+		 </tr>
+		 
+		  <tr >
+		 <td>商圈</td>
+		 <td>
+			<php>
+			 if($shop[city_id]!=''||$shop[city_id]!=0){
+				$areas=getareas($shop[city_id]);
+			 }
+			</php>
+			<select name="province_id2" id="province_id2" onchange="loadRegion('province_id2',2,'city_id2','{:U('Admin/Ajax/getRegion')}');" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择省</option>
+                <volist name="province" id="v">
+                    <option value="{$v.provinceid}" <if condition="$v[provinceid] eq $shop[province_id]">selected</if>>{$v.province}</option>
+                </volist>
+            </select>
+			<php>
+			 if($shop[province_id]!=''||$shop[province_id]!=0){
+				$cities=getcities($shop[province_id]);
+			 }
+			</php>
+		   
+		    <select name="city_id2" id="city_id2" onchange="loadCircle('city_id2','circle_id','{:U('Admin/Ajax/getcircle')}');" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择城市</option>
+				<volist name="cities" id="vc">
+				<option value="{$vc.id}" <if condition="$vc[id] eq $shop[city_id]">selected</if>>{$vc.name}</option>
+				</volist>
+            </select>
+			
+		     <select name="circle_id" id="circle_id" class="form-control" style="width:30%;float:left;">
+				<option value="0">选择商圈</option>
+				<volist name="circle" id="vc">
+				<option value="{$vc.id}" <if condition="$vc[id] eq $shop[circle_id]">selected</if>>{$vc.name}</option>
+				</volist>
+                
+            </select>
+		 </td>
+		 </tr>
+		  <tr >
+		 <td>店铺介绍</td>
+		<td style="max-width:800px">
+		 
+		  <textarea id="des" name="des" style="width:500px;height:100px;">{$shop.description}</textarea>
+		 
+		 </td>
+		 </tr>
+		 <tr >
+         <td>点击数</td>
+		 <td><input type="text" id="clicks" name="clicks" value="{$shop.clicks}"></td>
+		 </tr>
+		 
+		 
+		  <tr >
+         <td>是否有wifi</td>
+		 <td>
+		
+				 <select id="is_wifi" name="is_wifi">
+					<option value="">请选择</option>
+					<option value="1" <if condition="$shop[is_wifi] eq 1">selected</if>>是</option>
+					<option value="0" <if condition="$shop[is_wifi] eq 0">selected</if>>否</option>
+				</select>
+		</td>
+		</tr>
+		
+		
+		 <tr>
+         <td>是否有车位</td>
+		 <td>
+		     <select id="is_park" name="is_park">
+					<option value="">请选择</option>
+					<option value="1" <if condition="$shop[is_park] eq 1">selected</if>>是</option>
+					<option value="0" <if condition="$shop[is_park] eq 0">selected</if>>否</option>
+				</select>
+		 
+		 </td>
+		 </tr>
+		  <tr >
+         <td>是否推荐</td>
+		  <td>
+		      <select id="is_command" name="is_command">
+					<option value="">请选择</option>
+					<option value="1" <if condition="$shop[is_command] eq 1">selected</if>>是</option>
+					<option value="0" <if condition="$shop[is_command] eq 0">selected</if>>否</option>
+				</select>
+		 
+		 </td>
+		 </tr>
+		  <tr>
+         <td>联系方式</td>
+		 <td>
+		 <input type="text" id="phone" name="phone" value="{$shop[phone]}">
+		 
+		 </td>
+		 </tr>
+		  <tr >
+         <td>消费标准</td>
+		  <td>
+		      <input type="text" id="standard_pay" name="standard_pay" value="{$shop[standard_pay]}">
+		  </td>
+		 </tr>
+		
+		
+		
+		
+		  <tr >
+         <td>折扣信息</td>
+		 <td>
+		     <input type="text" id="discount" name="discount" value="{$shop[discount]}">
+		     </td>
+		 </tr>
+
+		  <tr >
+		 <td>自定义关键字</td>
+		<td>
+		     <input type="text" id="tags" name="tags" value="{$shop[tags]}" style="width:60%;">
+		</td>
+		</tr>
+		
+
+</table>
+</form >
+	<div style="text-align:center;">
+	   
+	    <input type="submit"  id="addshop" class="btn btn-default" value="下一步">
+		
+	</div>	
+</section>
+
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               标示地图(点击你选择的地点)
+            </h4>
+         </div>
+         <div class="modal-body">
+			<div class="bigdiv">
+				<div id="allmap"></div>
+			</div>
+			<script type="text/javascript">
+
+
+//创建和初始化地图函数：
+function initMap() {
+    createMap({$shop.longitude}, {$shop.latitude});//创建地图
+    setMapEvent();//设置地图事件
+    addMapControl();//向地图添加控件
+}
+
+//地图搜索
+function searchMap() {
+    var area = document.getElementById("input").value; //得到地区
+    var ls = new BMap.LocalSearch(map);
+    ls.setSearchCompleteCallback(function(rs) {
+        if (ls.getStatus() == BMAP_STATUS_SUCCESS) {
+            var poi = rs.getPoi(0);
+            if (poi) {
+                createMap(poi.point.lng, poi.point.lat);//创建地图(经度poi.point.lng,纬度poi.point.lat)
+                setMapEvent();//设置地图事件
+                addMapControl();//向地图添加控件
+            }
+        }
+    });
+    ls.search(area);
+}
+
+//创建地图函数：
+function createMap(x, y) {
+    var map = new BMap.Map("allmap");//在百度地图容器中创建一个地图
+    var point = new BMap.Point(x, y);//定义一个中心点坐标
+    map.centerAndZoom(point, 16);//设定地图的中心点和坐标并将地图显示在地图容器中
+    window.map = map;//将map变量存储在全局
+	
+	var marker = new BMap.Marker(point);  // 创建标注
+	map.addOverlay(marker);              // 将标注添加到地图中
+	document.getElementById("longitude").value = x;//打印拖动结束坐标
+	document.getElementById("latitude").value = y;//打印拖动结束坐标
+	
+	//地图点击事件
+	map.addEventListener("click", function (e) { 
+		//alert(e.point.lng+"---"+ e.point.lat);
+		map.removeOverlay(marker);//清除标注
+		var point = new BMap.Point(e.point.lng, e.point.lat);
+		//map.centerAndZoom(point, 15);//设定地图的中心点和坐标并将地图显示在地图容器中
+		
+		marker = new BMap.Marker(point);
+		map.addOverlay(marker);              // 将标注添加到地图中
+		//var label = new BMap.Label("点击进行修改",{offset:new BMap.Size(20,-10)});
+		//marker.setLabel(label);		
+		
+		document.getElementById("longitude").value = e.point.lng;//打印拖动结束坐标
+		document.getElementById("latitude").value = e.point.lat;//打印拖动结束坐标
+					
+		
+		
+	});
+	
+}
+
+//地图事件设置函数：
+function setMapEvent() {
+    map.enableDragging();//启用地图拖拽事件，默认启用(可不写)
+    map.enableScrollWheelZoom();//启用地图滚轮放大缩小
+    map.enableDoubleClickZoom();//启用鼠标双击放大，默认启用(可不写)
+    map.enableKeyboard();//启用键盘上下左右键移动地图
+	
+	
+}
+
+//地图控件添加函数：
+function addMapControl() {
+    //向地图中添加缩放控件
+    var ctrl_nav = new BMap.NavigationControl( {
+        anchor : BMAP_ANCHOR_TOP_LEFT,
+        type : BMAP_NAVIGATION_CONTROL_LARGE
+    });
+    map.addControl(ctrl_nav);
+    //向地图中添加缩略图控件
+    var ctrl_ove = new BMap.OverviewMapControl( {
+        anchor : BMAP_ANCHOR_BOTTOM_RIGHT,
+        isOpen : 1
+    });
+    map.addControl(ctrl_ove);
+    //向地图中添加比例尺控件
+    var ctrl_sca = new BMap.ScaleControl( {
+        anchor : BMAP_ANCHOR_BOTTOM_LEFT
+    });
+    map.addControl(ctrl_sca);
+}
+
+initMap();//创建和初始化地图
+			 
+</script>
+			<div style="position:absolute;top:10px;right:10px;">
+				<input type="text" id="input" />
+				<input type="button" onclick="searchMap();" value="搜索地图" />
+			</div>
+			
+         </div>
+         <div class="modal-footer">
+
+            <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">
+               确定
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+<script>
+$(document).ready(function(e) {
+
+//提交店铺信息
+  	$('#addshop').click(function(){
+		if($('#shopname').val()==''){
+			alert("店铺名称不能为空.");return false;
+		}
+		
+		if($('#companyphone').val()==''){
+			alert("企业用户手机不能为空.");return false;
+		}
+		if(!$('#companyphone').val().match(/^((1[3-8]{1})+\d{9})$/)){
+			alert("企业手机号码格式不对.");return false;
+		}
+		
+
+		if($('#province_id').val()=='0'){
+			alert("请选择省份.");return false;
+		}
+		
+		
+		if($('#city_id').val()=='0'){
+			alert("请选择城市.");return false;
+		}
+		if($('#area_id').val()=='0'){
+			alert("请选择区/县.");return false;
+		}
+		if($('#address').val()==''){
+			alert("详细地址不能为空.");return false;
+		}
+		if($('#longitude').val()==''){
+			alert("请选择坐标.");return false;
+		}
+		if($('#latitude').val()==''){
+			alert("请选择坐标.");return false;
+		}
+		if($('#des').val()==''){
+			alert("店铺介绍不能为空.");return false;
+		}
+		if($('#phone').val()==''){
+			alert("联系方式手机不能为空.");return false;
+		}
+			//if(!$('#phone').val().match(/^((1[3-8]{1})+\d{9})$/)){
+			//alert("联系方式手机号码格式不对.");return false;
+		//}
+		
+		
+		$.post("{:U('Admin/Koubei/update')}",$('#add-form').serialize(), function(data){
+			console.log(data);
+			if(data>=0){
+			alert('店铺修改成功'); 
+			location.href ="{:U('myshop2')}?id="+data;
+			}
+			else if(data==-2){
+			alert('商家不存在');return false;
+			}
+
+			else{
+			alert(data);
+			//alert('提交失败');
+			return false;
+			}
+			
+		});
+	});
+
+	
+	
+
+});
+
+//加载城市，地区，sel当前的id,type_id为类型，2为城市，3为地区，selName为生成数据填充的id，url为请求数据的url
+function loadRegion(sel,type_id,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val(),type:type_id},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+
+//加载商圈,sel当前的id,selName为生成数据填充的id，url为请求数据的url
+function loadCircle(sel,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{cityid:$("#"+sel).val()},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+
+//加载二级分类，sel当前的id,selName为生成数据填充的id，url为请求数据的url
+function loadchildcat(sel,selName,url){
+	$("#"+selName).html('');
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val()},
+	
+	function(data){
+		if(data){
+		console.log(data);
+			$.each(data,function(idx,item){
+
+				$("<label style='float:left;margin-right:10px;'><input type='checkbox' name='childcat[]' value="+item.id+">"+item.name+"</label>").appendTo($("#"+selName));
+
+			});
+		}else{
+			//$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+</script>
+<include file="Public/footer" />

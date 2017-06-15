@@ -1,0 +1,215 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>报错信息管理<span style="margin-left:10px;color:#cc0000;">({$usernum}条记录)</span></caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="请输入店铺名称"><input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+        <th>编号</th>
+        
+        <th>店铺名称</th>
+		
+        <th>报错类型</th>
+		
+        
+        <th>用户名</th>
+		<th>提交时间</th>
+		
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="baocuolist" item="v">
+      <tr id="user-{$v.id}">
+			<td>{$v.id}</td>
+		
+			<td>{$v.shop_id|getkbshopname=###}</td>
+			
+			<td>
+				 <if condition="$v[baocuo_type] eq '1'">
+							<span style="color:black">信息错误</span>
+					<elseif condition="$v[baocuo_type] eq '2'" />
+						   <span style="color:black">商家已关</span>
+					<elseif condition="$v[baocuo_type] eq '3'" />
+						   <span style="color:black">商家占用</span>	   
+						   
+				</if>
+			</td>
+			<td>{$v.user_id|getusername=###}</td>
+			<td>{$v.create_time|date="Y-m-d H:m",###}</td>
+			
+	  </foreach>
+	  <tr>
+		<td colspan="15" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+
+
+
+
+<script>
+$(document).ready(function(e) {
+	$('.edit-userdata').click(function(){
+		$('#myAlert').remove();
+		console.log($(this).parent().siblings().eq(1).text());
+		$('#modal-user-id').text($(this).parent().siblings().eq(0).text());
+		$('#modal-user-name').text($(this).parent().siblings().eq(1).text());
+		$(':input[name="user-id"]').val($(this).parent().siblings().eq(0).text());
+		$(':input[name="phone"]').val($(this).parent().siblings().eq(4).text());
+		$(':input[name="email"]').val($(this).parent().siblings().eq(3).text());
+		$(':input[name="realname"]').val($(this).parent().siblings().eq(5).text());
+		//$(':input[name="sexx"]').val($(this).parent().siblings().eq(7).text());
+		if($(this).parent().siblings().eq(7).text()=="男"){
+			$('#sex1').attr("checked","checked");
+		}
+		if($(this).parent().siblings().eq(7).text()=="女"){
+			$('#sex2').attr("checked","checked");
+		}
+		$(':input[name="qq"]').val($(this).parent().siblings().eq(6).text());
+	});
+	$('#user-submit').click(function(){
+		var url="{:U('edit_user')}?"+$('form').serialize();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data=='edit-success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>修改成功！</strong></div>';
+			$('.modal-header').append(html);
+			location.href ="{:U('index')}";
+		}
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+	
+	$('.active-user').click(function(){
+		$('#myAlert').remove();
+		//console.log($(this).parent().siblings().eq(1).text());
+		$(':input[name="active_uid"]').val($(this).parent().siblings().eq(0).text());
+		$(':input[name="active_id"]').val($(this).attr('data-id'));
+	});
+	
+	$('#user-active').click(function(){
+		var url="{:U('active_user')}?"+$('form').serialize();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data=='active-success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>操作成功！</strong></div>';
+			$('.modal-header').append(html);
+			window.location.reload();
+		}
+		
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+
+	$('.edit-userwx').click(function(){
+		$('#myAlert').remove();
+		//console.log($(this).parent().siblings().eq(1).text());
+		$(':input[name="wx_id"]').val($(this).attr('data-id'));
+	});
+	
+	$('#douserwx').click(function(){
+		var url="{:U('dowx_user')}?"+$('form').serialize();
+		console.log(url);
+		$.get(url,function(data,status){
+		console.log(data);
+		if(data=='active-success'){
+			//$('#myModal').modal('hide');
+			$('#myAlert').remove();
+			var html='<div id="myAlert" class="alert alert-success"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>操作成功！</strong></div>';
+			$('.modal-header').append(html);
+			window.location.reload();
+		}
+		
+		else{
+			var html='<div id="myAlert" class="alert alert-warning"><a href="#" class="close" data-dismiss="alert">&times;</a><strong>提交失败，请检查网络并重试</strong></div>';
+			$('.modal-header').append(html);
+		}
+		});
+	});
+	
+	//搜索
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('baocuo')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('usertoexcel')}?keyword="+keyword;
+	window.location.href=url;
+	});
+
+});
+function loadRegion(sel,type_id,selName,url){
+	//alert($("#"+sel).val());
+	$("#"+selName+" option").each(function(){
+		$(this).remove();
+	});
+	$("<option value=0>-请选择-</option>").appendTo($("#"+selName));
+	if($("#"+sel).val()==0){
+		return;
+	}
+	$.getJSON(url,{pid:$("#"+sel).val(),type:type_id},
+	
+	function(data){
+		if(data){
+			$.each(data,function(idx,item){
+
+				$("<option value="+item.id+">"+item.name+"</option>").appendTo($("#"+selName));
+
+			});
+		}else{
+			$("<option value='0'>-请选择-</option>").appendTo($("#"+selName));
+		}
+
+	}
+
+	);
+}
+
+</script>
+<include file="Public/footer" />

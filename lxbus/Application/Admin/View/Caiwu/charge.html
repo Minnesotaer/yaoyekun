@@ -1,0 +1,226 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+   <caption>商家充值审核</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或商家名"><input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+         <th>ID</th>
+         <th>商家编号</th>
+         <th>商家</th>
+         <th>用户手机</th>
+         <th>金额</th>
+         <th>实际金额</th>
+         <th>支付宝帐号</th>
+		 <th>备注</th>
+		 <th>时间</th>
+		 <th>状态</th>
+		 <th>审核时间</th>
+		 <th></th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="charge" item="v">
+      <tr>
+         <td>{$v.id}</td>
+         <td>{$v.company_id}</td>
+         <td>{$v.company_name}</td>
+         <td>{$v.phone}</td>
+         <td>{$v.amount}</td>
+         <td>{$v.real_amount}</td>
+         <td>{$v.alipay_number}</td>
+         <td>{$v.remark}</td>
+         <td>{$v.create_time|date="Y-m-d H:i",###}</td>
+         <td>{$v.status|getCheckstausdes=###}</td>
+         <td><if condition="$v[check_time] eq 0">--<else/>{$v.check_time|date="Y-m-d H:i",###}</if></td>
+         <td  align="center">
+		<div class="btn-group">
+        <button <if condition="$v['status'] neq 0">disabled='disabled' class="btn btn-xs btn-primary" <else /> class="btn btn-success btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" </if>type="button"> 操作 <span class="caret"></span> </button>
+        <ul class="dropdown-menu">
+            <li><a class="checkWithdraw" data-toggle="modal"  data-target="#myModal" data-id="{$v.id}" data-company-id="{$v.company_id}" data-company-amount="{$v.amount}" data-company-phone="{$v.phone}" data-company-name="{$v.company_name}">审核</a></li>
+			<li><a data-id="{$v.id}" class="refuseOrder">拒绝</a></li>
+        </ul>
+        </div></td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="12" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" 
+   aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <button type="button" class="close" 
+               data-dismiss="modal" aria-hidden="true">
+                  &times;
+            </button>
+            <h4 class="modal-title" id="myModalLabel">
+               审核商家充值
+            </h4>
+         </div>
+         <div class="modal-body">
+			<form class="form-horizontal" role="form">
+			<div class="form-group">
+			<label class="col-sm-2 control-label">商家编号</label>
+			<div class="col-sm-10">
+			<p class="form-control-static" id="modal-company-id"></p>
+			<input type="hidden"  name="charge_id">
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="col-sm-2 control-label">商家</label>
+			<div class="col-sm-10">
+			<p class="form-control-static" id="modal-company-name"></p></div>
+			</div>
+			
+			<div class="form-group">
+			<label class="col-sm-2 control-label">用户手机</label>
+			<div class="col-sm-10">
+			<p class="form-control-static" id="modal-company-phone"></p></div>
+			</div>
+			
+			<div class="form-group">
+			<label class="col-sm-2 control-label">金额</label>
+			<div class="col-sm-10">
+			<p class="form-control-static" id="modal-company-amount"></p></div>
+			</div>
+			
+			<div class="form-group">
+			<label for="inputqq" class="col-sm-2 control-label">实际金额</label>
+			<div class="col-sm-10">
+			<input type="text" name="real_amount" class="form-control"></div>
+			</div>
+			
+			<div class="form-group">
+			<label for="inputqq" class="col-sm-2 control-label">修改密码</label>
+			<div class="col-sm-10">
+			<input type="password" name="password" class="form-control"></div>
+			</div>
+			
+			</form>
+			
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-default" 
+               data-dismiss="modal">关闭
+            </button>
+            <button type="button" class="btn btn-primary" id="docheckWithdraw">
+               提交
+            </button>
+         </div>
+      </div><!-- /.modal-content -->
+</div><!-- /.modal -->
+</div>
+
+<script>
+$(document).ready(function(e) {
+	$('.checkWithdraw').click(function(){
+		$('#myAlert').remove();
+		$(':input[name="charge_id"]').val($(this).attr('data-id'));
+		$('#modal-company-id').text($(this).attr('data-company-id'));
+		$('#modal-company-name').text($(this).attr('data-company-name'));
+		$('#modal-company-phone').text($(this).attr('data-company-phone'));
+		$('#modal-company-amount').text($(this).attr('data-company-amount'));
+	});
+	$('#docheckWithdraw').click(function(){
+	console.log($(this).attr('data-id'));
+	//alert('后台已禁止手动审核充值');
+	var url = "{:U('docharge')}?c_id="+$(':input[name="charge_id"]').val()+"&real_amount="+$(':input[name="real_amount"]').val()+"&password="+$(':input[name="password"]').val();
+	var text = $( this ).text();
+	var r=confirm('你确定要提交这个订单吗？')
+	if (r==true){
+		if($(':input[name="real_amount"]').val()==''){
+			alert("实际金额不能为空");return false;
+		}
+		if($(':input[name="password"]').val()==''){
+			alert("密码不能为空");return false;
+		}
+		$.get(url, function(data,status){
+		if(data>=0){
+			alert('审核成功');
+			location.reload();
+		}
+		else if(data==-1){
+			alert('密码错误');
+		}
+		else if(data==-2){
+			alert('审核失败2');
+		}
+		else if(data==-3){
+			alert('审核失败1');
+		}
+		else if(data==-4){
+			alert('数据不存在');
+		}
+		else if(data==-5){
+			alert('审核金额不能大于充值金额');
+		}
+		});
+		}
+	});
+	
+	$('.refuseOrder').click(function(){
+	console.log($(this).attr('data-id'));
+	alert('后台已禁止手动审核充值');
+	/*var url = "{:U('docharge')}?c_id="+$(this).attr('data-id');
+	var text = $( this ).text();
+	var r=confirm('你确定要'+text+'这个订单吗？')
+	if (r==true){
+		$.get(url, function(data,status){
+		if(data=='success'){
+			alert('审核成功');
+			location.reload();
+		}
+		else{
+			alert('error:'+data);
+		}
+		});
+		}*/
+	});
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('charge')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var url = "{:U('chargetoexcel')}?keyword="+keyword;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

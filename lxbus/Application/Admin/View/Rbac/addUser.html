@@ -1,0 +1,116 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+div{
+	float:none;
+}
+.form-group{
+	width:100%;
+	margin:10px 0px 0px 0px;
+}
+.form-group div{
+	width:100%;
+}
+.table-responsive{
+	margin-left:10%;
+	width:50%;
+}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<table class="table table-striped">
+   <div style="font-size:22px;border-bottom:1px solid #ccc;">添加用户</div>
+   <div class="table-responsive">
+		<form class="form-horizontal" action="{:U('Rbac/do_user')}" method="post" role="form">
+		  <div class="form-group">
+			<label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
+			<div>
+			  <input type="text" class="form-control" id="inputEmail3" name="username" placeholder="用户名" value="{$data[username]}"/>
+			</div>
+		  </div>
+		  <div class="form-group">
+			<label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+			<div>
+			  <input type="hidden" class="form-control" id="passwordold" name="passwordold" value="{$data[password]}" />
+			  <input type="password" class="form-control" id="password" name="password" placeholder="密码" />
+			</div>
+		  </div>
+		  <div class="form-group">
+			<div style="float:left;width:70%;margin-bottom:10px;">
+				<select name="role_id" class="form-control">
+					<option value="">选择角色</option>
+					<foreach name="role" item="vr">
+						<option value="{$vr['id']}" <if condition="$vr['id'] eq $role_id">selected</if>>{$vr.name}({$vr.remark})</option>
+					</foreach>
+				</select>
+			</div>
+			<div style="float:left;width:30%;padding-left:30px;display:none;">
+				<a class="btn btn-primary" id="role">添加一个角色</a>
+			</div>
+		  </div>
+		  
+		  <div class="form-group" id="last">
+			<div style="clear:both;">
+			  <input type="hidden" name="user_id" value="{$data['user_id']}">
+			  <button type="submit" class="btn btn-default">保存</button>
+			</div>
+		  </div>
+		</form>
+	 </div>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('.checkWithdraw').click(function(){
+	console.log($(this).attr('data-id'));
+	var url = "{:U('docharge')}?c_id="+$(this).attr('data-id');
+	var text = $( this ).text();
+	var r=confirm('你确定要'+text+'这个订单吗？')
+	if (r==true){
+		$.get(url, function(data,status){
+		if(data=='success'){
+			alert('审核成功');
+			location.reload();
+		}
+		else{
+			alert('error:'+data);
+		}
+		});
+		}
+	});
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+});
+</script>
+<script>
+	$(function()
+	{
+		$('#role').click(function()
+		{
+			var obj = $(this).parents('.form-group').clone();
+			obj.find('#role').remove();
+			$('#last').before(obj);
+		})
+	});
+</script>
+<include file="Public/footer" />

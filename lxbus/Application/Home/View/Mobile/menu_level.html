@@ -1,0 +1,75 @@
+<html>
+<include file="Public/mobile_head" />
+ 
+  
+<body style="margin:0;padding:0;background:#eee;">
+
+<div style="padding:0px 5px 10px 5px;">
+
+	<if condition="$is_ok eq 1">
+	<div class="mlist" style="margin-bottom:10px;">
+		<form>
+		<input type="hidden" name="user_id" id="user_id" value="{$user_id}"/>
+		<input type="hidden" name="token" id="token" value="{$token}"/>
+		<p style="font-size:1.2em;"><span class="sp1">当前等级：</span><span class="sp2">{$user[level]|getManagerGrade=###}</span></p>
+		<p>
+		<p style="font-size:1.2em;"><span class="sp1">升级为：</span><span class="sp2">
+		<select name="level" id="level" style="padding:5px;">
+			<option value="">请选择等级</option>
+			<option value="1">{:getManagerGrade(1)}</option>
+			<!--option value="2">高级业务员</option-->
+		</select>
+		</span>
+		</p>
+		<p>
+		<div class="col-sm-offset-4 col-sm-4">
+		  <input type="button" id="upmanagerok" class="btn btn-primary btn-block" style="width:30%;margin-left:30%;" value="提交申请"/>
+		</div>
+		</p>
+		</form>
+	</div>
+	</if>
+	<if condition="$is_ok eq 0">
+	<div class="alert alert-info col-md-8 col-md-offset-2"  role="alert">
+	用户非法操作。
+	</div>
+	</if>
+</div>
+
+
+</body>
+<script>
+
+	$(document).ready(function(e) {
+		//业务员升级
+		$('#upmanagerok').click(function(){
+		$.get("{:U('Home/Mobile/upmanager')}?user_id={$user_id}&token={$token}&level="+$("#level").val(), function(data,status){
+			//console.log(data);
+			//alert(data);
+			if(data>=0){
+				alert('申请提交成功,请等待审核');
+			}
+			else if(data==-2){
+				alert('你已经提交过申请');
+			}
+			else if(data==-3){
+				alert('请先进行实名认证');
+			}
+			else if(data==-4){
+				alert('非法操作');
+			}
+			else if(data==-5){
+				alert('推荐会员没有达到10人');
+			}
+			else{
+				alert('申请提交失败');
+			}
+			
+		});
+		});		
+	
+	});
+
+</script>
+
+</html>

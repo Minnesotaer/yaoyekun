@@ -1,0 +1,301 @@
+<include file="Public/header" title="后台主页" />
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+	<section class="content-header">
+	  <div>
+		<p style="color:#cc0000;">提醒</p>
+		<if condition="$views_data[cptxnum] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/Caiwu/cpwithdraw')}" style="font-size:18px;color:#cc0000;">有{$views_data[cptxnum]}个商家提现未处理</a></div></if>
+		
+		<if condition="$views_data[cstxnum] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/Caiwu/cswithdraw')}" style="font-size:18px;color:#cc0000;">有{$views_data[cstxnum]}个消费者提现未处理</a></div></if>
+
+		<if condition="$views_data[mntxnum] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/Caiwu/mnwithdraw')}" style="font-size:18px;color:#cc0000;">有{$views_data[mntxnum]}个业务员提现未处理</a></div></if>
+
+		<if condition="$views_data[userrz] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/User/userapply')}" style="font-size:18px;color:#cc0000;">有{$views_data[userrz]}个个人认证未处理</a></div></if>
+		
+		<if condition="$views_data[companyrz] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/User/cprz')}" style="font-size:18px;color:#cc0000;">有{$views_data[companyrz]}个企业认证未处理</a></div></if>
+		
+		<if condition="$views_data[managerup] gt 0">
+		<div style="float:left;padding:5px;border:1px solid #ccc;margin-right:6px;"><a href="{:U('Admin/User/mnupgrade')}" style="font-size:18px;color:#cc0000;">有{$views_data[managerup]}个业务员升级未处理</a></div></if>
+	  </div>
+	  <div style="clear:both;"></div>
+	</section>
+	  
+    <!-- Main content -->
+	
+	<if condition="$_SESSION[C('ADMIN_AUTH_KEY')] neq ''">
+    <section class="content">
+	  
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>{$views_data.bzbcount}</h3>
+
+              <p>张报账券</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-bag"></i>
+            </div>
+            <a href="{:U('Admin/Bzb/bz')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{$views_data.cscount}</h3>
+
+              <p>消费者({$views_data.chekuser}个已认证)</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="{:U('Admin/User/cs')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>{$views_data.cpcount}</h3>
+
+              <p>商家({$views_data.chekcompany}个已认证)</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="{:U('Admin/User/cp')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3>{$views_data.mncount2}</h3>
+
+              <p>合伙人</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="{:U('Admin/User/mn',array('mntype'=>0))}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>{$views_data.mncount}</h3>
+
+              <p>业务经理</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="{:U('Admin/User/mn',array('mntype'=>1))}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>{$views_data.fgscount}</h3>
+
+              <p>分公司</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-person-add"></i>
+            </div>
+            <a href="{:U('Admin/Fengongshi/fgslist')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>{$views_data.moneycount}</h3>
+
+              <p>总消费金额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Bzb/order')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3>{$views_data.charges}</h3>
+
+              <p>商家充值总额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/charge')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{$views_data.cpmoney}</h3>
+
+              <p>商家余额总额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/cpyue')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-yellow">
+            <div class="inner">
+              <h3>{$views_data.cpoutmoney}</h3>
+
+              <p>商家报出总额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Bzb/bz')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3>{$views_data.csoutmoney}</h3>
+
+              <p>消费者报出总额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Bzb/bz')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>{$views_data.csmoney}</h3>
+
+              <p>消费者余额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/csyue')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3>{$views_data.mnmoney}</h3>
+
+              <p>业务经理余额</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/mnyue')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-aqua">
+            <div class="inner">
+              <h3><if condition="$views_data[cpwithdraw] neq ''">{$views_data.cpwithdraw}<else/>0</if></h3>
+
+              <p>商家已提现</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/cpwithdraw')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3><if condition="$views_data[mnwithdraw] neq ''">{$views_data.mnwithdraw}<else/>0</if></h3>
+
+              <p>业务员已提现</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/mnwithdraw')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+		<!-- ./col -->
+		<div class="col-lg-3 col-xs-6">
+          <!-- small box -->
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3><if condition="$views_data[cswithdraw] neq ''">{$views_data.cswithdraw}<else/>0</if></h3>
+
+              <p>消费者已提现</p>
+            </div>
+            <div class="icon">
+              <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="{:U('Admin/Caiwu/cswithdraw')}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+      </div>
+      <!-- /.row -->
+      <!-- Main row -->
+      
+      <!-- /.row (main row) -->
+
+    </section>
+	
+	<else/>
+	<p style="padding:12px;font-size:18px;">报账宝欢迎您！</p>
+	</if>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+<include file="Public/footer" />

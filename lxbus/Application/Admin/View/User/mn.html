@@ -1,0 +1,90 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>业务员管理<span style="margin-left:10px;color:#cc0000;">({$mnnum}条记录)</span></caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或名称">
+	<select id="mntype" name="mntype">
+		<option value="">选择业务等级</option>
+		<option value="0" <if condition="$mntype eq '0'">selected</if>>合伙人</option>
+		<option value="1" <if condition="$mntype eq '1'">selected</if>>业务经理</option>
+	</select>
+	<input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+		 <th>业务ID</th>
+         <th>姓名</th>
+         <th>手机</th>
+         <th>邮箱</th>
+         <th>QQ</th>
+         <th>推荐消费者</th>
+         <th>推荐企业</th>
+         <th>业务员等级</th>
+         <th>推荐收入</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="mnlist" item="v">
+      <tr>
+         <td>{$v.manager_id}</td>
+		 <td>{$v.realname}</td>
+		 <td>{$v.phone}</td>
+         <td>{$v.email}</td>
+         <td>{$v.qq}</td>
+         <td>{$v.user_id|gettjcsnum=###}<a href="{:U('cs',array('tjren'=>$v[user_id]))}" style="float:right;">查看</a></td>
+         <td>{$v.user_id|gettjcpnum=###}<a href="{:U('cp',array('tjren'=>$v[user_id]))}" style="float:right;">查看</a></td>
+         <td>{$v.level|getManagerGrade=###}</td>
+         <td>{$v.money}</td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="9" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+ $(document).ready(function(e) {
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	var mntype=$('#mntype').val();
+	
+	var url = "{:U('mn')}?keyword="+keyword+"&mntype="+mntype;
+	window.location.href=url;
+	});
+	
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var mntype=$('#mntype').val();
+	
+	var url = "{:U('mntoexcel')}?keyword="+keyword+"&mntype="+mntype;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

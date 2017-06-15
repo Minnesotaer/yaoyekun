@@ -1,0 +1,79 @@
+<include file="Public/header" title="后台主页" />
+
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+	<div id="page-wrapper">
+    <form method="post" action="{:U('edit')}">
+        <div class="form-group">
+            <label for="post-title">文章标题</label>
+            <input type="text" name="cms_title" class="form-control" value="{$wenzhang.cms_title}" id="post-title" placeholder="输入文章标题">
+        </div>
+        <div class="form-group">
+            <label for="post-cate">文章分类</label>
+            <select name="cms_type" id="post-cate" class="form-control">
+                <option value="">选择分类</option>
+                <volist name="category" id="v">
+                    <option value="{$v.catid}" <if condition="$v[catid] eq $wenzhang[cms_type]">selected</if>>{$v.catname}</option>
+					<volist name="v.children" id="vc">
+					<option value="{$vc.id}" <if condition="$vc[id] eq $wenzhang[cms_type]">selected</if>>|---{$vc.name}</option>
+					</volist>
+                </volist>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="post-content">文章内容</label>
+            <script id="post-content" name="cms_content" type="text/plain">{$wenzhang.cms_content|htmlspecialchars_decode}</script>
+        </div>
+        <div class="form-group">
+            <label>文章类型</label>
+            <label class="radio-inline">
+              <input type="radio" name="type" id="type" value="1" <if condition="$post.type eq 1">checked="checked"</if> >普通
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="type" id="type" value="2" <if condition="$post.type eq 2">checked="checked"</if>>置顶
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="type" id="type" value="3" <if condition="$post.type eq 3">checked="checked"</if>>热门
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="type" id="type" value="4" <if condition="$post.type eq 4">checked="checked"</if>>推荐
+            </label>
+        </div>
+        <input type="hidden" name="cms_id" value="{$wenzhang.cms_id}">
+        <button type="submit" class="btn btn-default">提交</button>
+    </form>
+</div>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<!-- 配置文件 -->
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.js"></script>
+<!-- 实例化编辑器 -->
+<script type="text/javascript">
+    var ue = UE.getEditor('post-content',{
+        toolbars: [
+            ['fullscreen', 'source', 'undo', 'redo','bold', 'italic', 'underline','fontborder', 'strikethrough', '|','simpleupload', 'insertimage','attachment','emotion','link','unlink', '|', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote','searchreplace', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc'],
+            ['inserttable','insertrow', 'insertcol','mergeright', 'mergedown','deleterow', 'deletecol','splittorows','splittocols', 'splittocells','deletecaption','inserttitle', 'mergecells', 'deletetable','insertparagraphbeforetable', 'paragraph','fontsize','fontfamily']
+        ],
+        initialFrameHeight:500,
+        zIndex:100
+    });
+</script>
+<include file="Public/footer" />

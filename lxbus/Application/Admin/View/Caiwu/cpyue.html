@@ -1,0 +1,73 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>企业余额列表</caption>
+   <caption>
+	<input type="text" name="keyword" id="keyword" value="{$keyword}" placeholder="用户手机或姓名或企业名"><input type="button" name="serach" id="search" value="搜索">
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+         <th>企业编号</th>
+         <th>手机</th>
+         <th>姓名</th>
+         <th>企业名称</th>
+         <th>金额</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="cpyue" item="v">
+      <tr>
+         <td>{$v.company_id}</td>
+         <td>{$v.phone}</td>
+         <td>{$v.realname}</td>
+         <td>{$v.company_name}</td>
+         <td><if condition="$v[money] gt 0"><span style="color:red;">{$v.money}</span><else/>{$v.money}</if></td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="7" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('#search').click(function(){
+	var keyword=$('#keyword').val();
+	
+	var url = "{:U('cpyue')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var url = "{:U('cpyuetoexcel')}?keyword="+keyword;
+	window.location.href=url;
+	});
+});
+</script>
+<include file="Public/footer" />

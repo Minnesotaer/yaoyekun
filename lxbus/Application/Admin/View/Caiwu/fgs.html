@@ -1,0 +1,85 @@
+<include file="Public/header" title="后台主页" />
+<style>
+.mypage{text-align:center;}
+.mypage .current{padding:2px 6px;background:#0ae;border:1px solid #ddd;color:#fff;margin:3px;}
+.mypage a{padding:2px 6px;background:#fff;border:1px solid #ddd;color:#0ae;margin:3px;}
+</style>
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        主页
+        <small>管理面板</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Dashboard</li>
+      </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content" style="overflow:hidden;">
+	<table class="table table-striped">
+   <caption>分公司津贴<span style="padding:10px;color:#cc0000;">总额：{$money}</span></caption>
+   <caption>
+	开始日期:<input type="text" name="fromdate" id="fromdate" <if condition="$fromdate gt 0">value="{$fromdate|date='Y-m-d',###}"</if> placeholder="开始日期">
+	结束日期:<input type="text" name="todate" id="todate" <if condition="$todate gt 0">value="{$todate|date='Y-m-d',###}"</if> placeholder="结束日期">
+	<input type="button" name="serach" id="search" value="搜索">(日期格式：2016-01-10)
+	<input type="button" name="toexcel" id="toexcel" value="导出Excel">
+   </caption>
+   <thead>
+      <tr>
+         <th>编号</th>
+         <th>关联企业</th>
+         <th>关联分公司</th>
+         <th>分公司地区</th>
+         <th>关联订单号</th>
+         <th>金额</th>
+         <th>百分比</th>
+         <th>备注</th>
+         <th>生成时间</th>
+      </tr>
+   </thead>
+   <tbody>
+	  <foreach name="data" item="v">
+      <tr>
+         <td>{$v.id}</td>
+         <td>{$v.company_id|getcpname=###}</td>
+         <td>{$v.fengongshi_id|getfengongshiname=###}</td>
+         <td>{$v.province_id|getprovincename=###}{$v.city_id|getcityname=###}{$v.area_id|getareaname=###}</td>
+         <td>{$v.order_id}</td>
+         <td><span style="color:#cc0000;">{$v.money}</span></td>
+		 <td>{$v.fengongshi_rate}</td>
+		 <td>{$v.remark}</td>
+		 <td>{$v.create_time|date='Y-m-d H:i:s',###}</td>
+      </tr>
+	  </foreach>
+	  <tr>
+		<td colspan="10" class="mypage">{$page}</td>
+	  </tr>
+   </tbody>
+</table>
+	</section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+<script>
+$(document).ready(function(e) {
+	$('#search').click(function(){
+	var fromdate=$('#fromdate').val();
+	var todate=$('#todate').val();
+	
+	var url = "{:U('fgs')}?fromdate="+fromdate+"&todate="+todate;
+	window.location.href=url;
+	});
+	//导出excel
+	$('#toexcel').click(function(){
+	var keyword=$('#keyword').val();
+	var url = "{:U('fgsexcel')}?keyword="+keyword;
+	window.location.href=url;
+	});
+	
+});
+</script>
+<include file="Public/footer" />
